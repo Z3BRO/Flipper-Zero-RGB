@@ -29,3 +29,5 @@ Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY
 The patch file is for UNLEASHED ONLY.
 
 When purchasing the pcb make sure to have the thickness set to 0.6mm and the layer ammount set as 2.
+
+Here is a video on how to use git patch files https://www.youtube.com/watch?v=ArbQNoNlFXk

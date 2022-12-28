@@ -16,6 +16,8 @@ Capacitors - https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT
 
 Leds, Pack of 10 - https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136
 
+Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY6
+
 # Firmware stuff
 
 All of the repos below have been modified with their respective patches
@@ -24,15 +26,57 @@ Unleashed - https://github.com/Z3BRO/unleashed-firmware/tree/RGB
 
 OFW - https://github.com/Z3BRO/flipperzero-firmware/tree/RBG
 
-How to compile the repos above 
-
+# How to compile from the repos above 
 
 Step 1: git clone --recursive FIRMWARELINKFROMABOVE
+
+
 Step 2: git switch RGB
-Step 3: Navigate to the folder where 
 
 
-Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY6
+Step 3: ./fbt updater_package
+
+
+Step 4: Navigate to dist\f7-D\ in the cloned repos folder ( Usually found at Documents\GitHub)
+
+
+Step 5: Copy the f7-update-local folder to the Update folder on your Flipper
+
+
+Step 6: On your Flipper Navigate to the Update folder
+
+
+Step 7: Open the f7-update-local folder
+
+
+Step 8: Update from the update.fuf file  ( It will have a picture of a box with an arrow next to it)
+
+
+# How to update from the pre compiled firmware
+
+Step 1: git clone --recursive https://github.com/Z3BRO/Flipper-Zero-RBG-Backlight
+
+
+Step 2: Navigate to the cloned repo ( usually its Documents\GitHub\Flipper-Zero-RBG-Backlight)
+
+
+Step 3: Open the Update Files folder
+
+
+Step 4: Copy the desired folder to the Update Folder on your Flipper
+
+
+Step 5: On your Flipper Navigate to the Update folder
+
+
+Step 6: Open the folder you just added ( Either OFW-0.74.2-RGB or Unleashed22-RGB)
+
+
+Step 7: Update from the update.fuf file  ( It will have a picture of a box with an arrow next to it)
+
+
+
+
 
 # Notes
 

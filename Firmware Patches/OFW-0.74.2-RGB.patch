@@ -1,5 +1,19 @@
-﻿diff --git a/applications/settings/notification_settings/notification_settings_app.c b/applications/settings/notification_settings/notification_settings_app.c
-index db9a1a01..88266b78 100644
+From c1926f10b4b8ac5cf93eb11d17f1f115d37bd4ec Mon Sep 17 00:00:00 2001
+From: ase1590 <ase1590@hotmail.com>
+Date: Tue, 27 Dec 2022 20:49:19 -0600
+Subject: [PATCH] added RGB patch
+
+---
+ .../notification_settings_app.c               |  31 ++-
+ firmware/targets/f7/furi_hal/furi_hal_light.c |   5 +-
+ lib/drivers/WS2812B.c                         | 208 ++++++++++++++++++
+ lib/drivers/WS2812B.h                         |  38 ++++
+ 4 files changed, 276 insertions(+), 6 deletions(-)
+ create mode 100644 lib/drivers/WS2812B.c
+ create mode 100644 lib/drivers/WS2812B.h
+
+diff --git a/applications/settings/notification_settings/notification_settings_app.c b/applications/settings/notification_settings/notification_settings_app.c
+index d462163a..88266b78 100644
 --- a/applications/settings/notification_settings/notification_settings_app.c
 +++ b/applications/settings/notification_settings/notification_settings_app.c
 @@ -3,6 +3,7 @@
@@ -10,7 +24,32 @@ index db9a1a01..88266b78 100644
  
  #define MAX_NOTIFICATION_SETTINGS 4
  
-@@ -73,9 +74,10 @@ const bool vibro_value[VIBRO_COUNT] = {false, true};
+@@ -46,16 +47,22 @@ const char* const volume_text[VOLUME_COUNT] = {
+ };
+ const float volume_value[VOLUME_COUNT] = {0.0f, 0.25f, 0.5f, 0.75f, 1.0f};
+ 
+-#define DELAY_COUNT 6
++#define DELAY_COUNT 11
+ const char* const delay_text[DELAY_COUNT] = {
+     "1s",
+     "5s",
++    "10s",
+     "15s",
+     "30s",
+     "60s",
++    "90s",
+     "120s",
++    "5min",
++    "10min",
++    "30min",
+ };
+-const uint32_t delay_value[DELAY_COUNT] = {1000, 5000, 15000, 30000, 60000, 120000};
++const uint32_t delay_value[DELAY_COUNT] =
++    {1000, 5000, 10000, 15000, 30000, 60000, 90000, 120000, 300000, 600000, 1800000};
+ 
+ #define VIBRO_COUNT 2
+ const char* const vibro_text[VIBRO_COUNT] = {
+@@ -67,9 +74,10 @@ const bool vibro_value[VIBRO_COUNT] = {false, true};
  static void backlight_changed(VariableItem* item) {
      NotificationAppSettings* app = variable_item_get_context(item);
      uint8_t index = variable_item_get_current_value_index(item);
@@ -22,7 +61,7 @@ index db9a1a01..88266b78 100644
      notification_message(app->notification, &sequence_display_backlight_on);
  }
  
-@@ -125,8 +127,18 @@ static void vibro_changed(VariableItem* item) {
+@@ -119,8 +127,18 @@ static void vibro_changed(VariableItem* item) {
      notification_message(app->notification, &sequence_single_vibro);
  }
  
@@ -41,7 +80,7 @@ index db9a1a01..88266b78 100644
      return VIEW_NONE;
  }
  
-@@ -149,6 +161,12 @@ static NotificationAppSettings* alloc_settings() {
+@@ -143,6 +161,12 @@ static NotificationAppSettings* alloc_settings() {
      variable_item_set_current_value_index(item, value_index);
      variable_item_set_current_value_text(item, backlight_text[value_index]);
  
@@ -54,7 +93,7 @@ index db9a1a01..88266b78 100644
      item = variable_item_list_add(
          app->variable_item_list, "Backlight Time", DELAY_COUNT, screen_changed, app);
      value_index = value_index_uint32(
-@@ -200,6 +218,7 @@ int32_t notification_settings_app(void* p) {
+@@ -194,6 +218,7 @@ int32_t notification_settings_app(void* p) {
      NotificationAppSettings* app = alloc_settings();
      view_dispatcher_run(app->view_dispatcher);
      notification_message_save_settings(app->notification);
@@ -87,7 +126,7 @@ index e6b3ab7d..c21c4723 100644
  }
 diff --git a/lib/drivers/WS2812B.c b/lib/drivers/WS2812B.c
 new file mode 100644
-index 00000000..52b90d66
+index 00000000..b72a477d
 --- /dev/null
 +++ b/lib/drivers/WS2812B.c
 @@ -0,0 +1,208 @@
@@ -344,3 +383,6 @@ index 00000000..c73d04ee
 +
 +#endif /* WS2812B_H_ */
 \ No newline at end of file
+-- 
+2.39.0
+

@@ -22,9 +22,9 @@ Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY
 
 All of the repos below have been modified with their respective patches
 
-Unleashed - https://github.com/Z3BRO/unleashed-firmware/tree/RGB
+Unleashed - https://github.com/Z3BRO/RGB-unleashed-firmware/tree/RGB
 
-OFW - https://github.com/quen0n/flipperzero-firmware-rgb/commits/release
+OFW - https://github.com/Z3BRO/flipperzero-firmware/tree/RGB
 
 # How to compile from the repos above 
 

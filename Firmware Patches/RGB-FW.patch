@@ -1,0 +1,1099 @@
+From 295d124f5ffaef5c7d060cec6cfa976a8df70d62 Mon Sep 17 00:00:00 2001
+From: Ari Bytyqi <101530102+Z3BRO@users.noreply.github.com>
+Date: Wed, 4 Jan 2023 10:05:44 -0600
+Subject: [PATCH] Applied Updated Patches
+
+---
+ 0001-added-RGB-patch.patch                    | 388 ++++++++++++++++++
+ 0003-added-new-DFU-fix-from-quen0n.patch      | 319 ++++++++++++++
+ .../notification_settings_app.c               |  18 +-
+ firmware/targets/f7/furi_hal/furi_hal_light.c |   5 +-
+ lib/drivers/WS2812B.c                         | 209 ++++++++++
+ lib/drivers/WS2812B.h                         |  54 +++
+ 6 files changed, 989 insertions(+), 4 deletions(-)
+ create mode 100644 0001-added-RGB-patch.patch
+ create mode 100644 0003-added-new-DFU-fix-from-quen0n.patch
+ create mode 100644 lib/drivers/WS2812B.c
+ create mode 100644 lib/drivers/WS2812B.h
+
+diff --git a/0001-added-RGB-patch.patch b/0001-added-RGB-patch.patch
+new file mode 100644
+index 00000000..f0e2859b
+--- /dev/null
++++ b/0001-added-RGB-patch.patch
+@@ -0,0 +1,388 @@
++From c1926f10b4b8ac5cf93eb11d17f1f115d37bd4ec Mon Sep 17 00:00:00 2001
++From: ase1590 <ase1590@hotmail.com>
++Date: Tue, 27 Dec 2022 20:49:19 -0600
++Subject: [PATCH 1/3] added RGB patch
++
++---
++ .../notification_settings_app.c               |  31 ++-
++ firmware/targets/f7/furi_hal/furi_hal_light.c |   5 +-
++ lib/drivers/WS2812B.c                         | 208 ++++++++++++++++++
++ lib/drivers/WS2812B.h                         |  38 ++++
++ 4 files changed, 276 insertions(+), 6 deletions(-)
++ create mode 100644 lib/drivers/WS2812B.c
++ create mode 100644 lib/drivers/WS2812B.h
++
++diff --git a/applications/settings/notification_settings/notification_settings_app.c b/applications/settings/notification_settings/notification_settings_app.c
++index d462163a..88266b78 100644
++--- a/applications/settings/notification_settings/notification_settings_app.c
+++++ b/applications/settings/notification_settings/notification_settings_app.c
++@@ -3,6 +3,7 @@
++ #include <gui/modules/variable_item_list.h>
++ #include <gui/view_dispatcher.h>
++ #include <lib/toolbox/value_index.h>
+++#include <lib/drivers/WS2812B.h>
++ 
++ #define MAX_NOTIFICATION_SETTINGS 4
++ 
++@@ -46,16 +47,22 @@ const char* const volume_text[VOLUME_COUNT] = {
++ };
++ const float volume_value[VOLUME_COUNT] = {0.0f, 0.25f, 0.5f, 0.75f, 1.0f};
++ 
++-#define DELAY_COUNT 6
+++#define DELAY_COUNT 11
++ const char* const delay_text[DELAY_COUNT] = {
++     "1s",
++     "5s",
+++    "10s",
++     "15s",
++     "30s",
++     "60s",
+++    "90s",
++     "120s",
+++    "5min",
+++    "10min",
+++    "30min",
++ };
++-const uint32_t delay_value[DELAY_COUNT] = {1000, 5000, 15000, 30000, 60000, 120000};
+++const uint32_t delay_value[DELAY_COUNT] =
+++    {1000, 5000, 10000, 15000, 30000, 60000, 90000, 120000, 300000, 600000, 1800000};
++ 
++ #define VIBRO_COUNT 2
++ const char* const vibro_text[VIBRO_COUNT] = {
++@@ -67,9 +74,10 @@ const bool vibro_value[VIBRO_COUNT] = {false, true};
++ static void backlight_changed(VariableItem* item) {
++     NotificationAppSettings* app = variable_item_get_context(item);
++     uint8_t index = variable_item_get_current_value_index(item);
++-
+++    rgb_backlight_set_brightness(app->notification->settings.display_brightness);
++     variable_item_set_current_value_text(item, backlight_text[index]);
++     app->notification->settings.display_brightness = backlight_value[index];
+++    furi_delay_ms(1);
++     notification_message(app->notification, &sequence_display_backlight_on);
++ }
++ 
++@@ -119,8 +127,18 @@ static void vibro_changed(VariableItem* item) {
++     notification_message(app->notification, &sequence_single_vibro);
++ }
++ 
+++static void color_changed(VariableItem* item) {
+++    NotificationAppSettings* app = variable_item_get_context(item);
+++    uint8_t index = variable_item_get_current_value_index(item);
+++    rgb_backlight_set_color(index);
+++    furi_delay_ms(1);
+++    variable_item_set_current_value_text(item, rgb_backlight_get_color_text(index));
+++    notification_message(app->notification, &sequence_display_backlight_on);
+++}
+++
++ static uint32_t notification_app_settings_exit(void* context) {
++     UNUSED(context);
+++    rgb_backlight_save_settings();
++     return VIEW_NONE;
++ }
++ 
++@@ -143,6 +161,12 @@ static NotificationAppSettings* alloc_settings() {
++     variable_item_set_current_value_index(item, value_index);
++     variable_item_set_current_value_text(item, backlight_text[value_index]);
++ 
+++    item = variable_item_list_add(
+++        app->variable_item_list, "LCD Color", rgb_backlight_get_color_count(), color_changed, app);
+++    value_index = rgb_backlight_get_settings()->display_color_index;
+++    variable_item_set_current_value_index(item, value_index);
+++    variable_item_set_current_value_text(item, rgb_backlight_get_color_text(value_index));
+++
++     item = variable_item_list_add(
++         app->variable_item_list, "Backlight Time", DELAY_COUNT, screen_changed, app);
++     value_index = value_index_uint32(
++@@ -194,6 +218,7 @@ int32_t notification_settings_app(void* p) {
++     NotificationAppSettings* app = alloc_settings();
++     view_dispatcher_run(app->view_dispatcher);
++     notification_message_save_settings(app->notification);
+++
++     free_settings(app);
++     return 0;
++ }
++diff --git a/firmware/targets/f7/furi_hal/furi_hal_light.c b/firmware/targets/f7/furi_hal/furi_hal_light.c
++index e6b3ab7d..c21c4723 100644
++--- a/firmware/targets/f7/furi_hal/furi_hal_light.c
+++++ b/firmware/targets/f7/furi_hal/furi_hal_light.c
++@@ -3,6 +3,7 @@
++ #include <furi_hal_light.h>
++ #include <lp5562.h>
++ #include <stdint.h>
+++#include <WS2812B.h>
++ 
++ #define LED_CURRENT_RED 50
++ #define LED_CURRENT_GREEN 50
++@@ -42,9 +43,7 @@ void furi_hal_light_set(Light light, uint8_t value) {
++         lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelBlue, value);
++     }
++     if(light & LightBacklight) {
++-        uint8_t prev = lp5562_get_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelWhite);
++-        lp5562_execute_ramp(
++-            &furi_hal_i2c_handle_power, LP5562Engine1, LP5562ChannelWhite, prev, value, 100);
+++        rgb_backlight_update(value);
++     }
++     furi_hal_i2c_release(&furi_hal_i2c_handle_power);
++ }
++diff --git a/lib/drivers/WS2812B.c b/lib/drivers/WS2812B.c
++new file mode 100644
++index 00000000..b72a477d
++--- /dev/null
+++++ b/lib/drivers/WS2812B.c
++@@ -0,0 +1,208 @@
+++/*
+++ * WS2812B.c
+++ *
+++ * Created: 03.05.2018 20:28:37
+++ *  Author: Quenon
+++ */
+++#include "WS2812B.h"
+++#include <string.h>
+++#include <stm32wbxx.h>
+++#include "furi_hal_light.h"
+++#include <furi.h>
+++#include <furi_hal.h>
+++#include <storage/storage.h>
+++#include <input/input.h>
+++
+++#define TAG "RGB Backlight"
+++#define RGB_BACKLIGHT_SETTINGS_VERSION 3
+++#define RGB_BACKLIGHT_SETTINGS_FILE_NAME ".rgb_backlight.settings"
+++#define RGB_BACKLIGHT_SETTINGS_PATH EXT_PATH(RGB_BACKLIGHT_SETTINGS_FILE_NAME)
+++
+++static uint8_t WS2812B_ledbuffer[WS2812B_LEDS][3];
+++
+++static RGBBacklightSettings rgb_settings = {
+++    .version = RGB_BACKLIGHT_SETTINGS_VERSION,
+++    .display_brightness = 1.0f,
+++    .display_color_index = 0,
+++    .settings_is_loaded = false};
+++
+++#define COLOR_COUNT (sizeof(color_value) / sizeof(uint32_t))
+++const char* color_text[] = {
+++    "Orange",
+++    "Yellow",
+++    "Lime",
+++    "Olive",
+++    "Green",
+++    "Teal",
+++    "Blue",
+++    "Aqua",
+++    "Fuchsia",
+++    "Red",
+++    "White"};
+++const uint32_t color_value[] = {
+++    //R G B
+++    0xFF4500, //Orange
+++    0xFFFF00, //Yellow
+++    0x00FF00, //Lime
+++    0x808000, //Olive
+++    0x008000, //Green
+++    0x008080, //Teal
+++    0x0000FF, //Blue
+++    0x00FFFF, //Aqua
+++    0xFF00FF, //Fuchsia
+++    0xFF0000, //Red
+++    0xFFFFE0, //White
+++};
+++
+++void WS2812B_send(void) {
+++    furi_kernel_lock();
+++    /* ╨Я╨╛╤Б╨╗╨╡╨┤╨╛╨▓╨░╤В╨╡╨╗╤М╨╜╨░╤П ╨╛╤В╨┐╤А╨░╨▓╨║╨░ ╤Ж╨▓╨╡╤В╨╛╨▓ ╤Б╨▓╨╡╤В╨╛╨┤╨╕╨╛╨┤╨╛╨▓ */
+++    for(uint8_t lednumber = 0; lednumber < WS2812B_LEDS; lednumber++) {
+++        //╨Я╨╛╤Б╨╗╨╡╨┤╨╛╨▓╨░╤В╨╡╨╗╤М╨╜╨░╤П ╨╛╤В╨┐╤А╨░╨▓╨║╨░ ╤Ж╨▓╨╡╤В╨╛╨▓ ╤Б╨▓╨╡╤В╨╛╨┤╨╕╨╛╨┤╨░
+++        for(uint8_t color = 0; color < 3; color++) {
+++            //╨Я╨╛╤Б╨╗╨╡╨┤╨╛╨▓╨░╤В╨╡╨╗╤М╨╜╨░╤П ╨╛╤В╨┐╤А╨░╨▓╨║╨░ ╨▒╨╕╤В╨╛╨▓ ╤Ж╨▓╨╡╤В╨░
+++            for(uint8_t i = 7; i != 255; i--) {
+++                if(WS2812B_ledbuffer[lednumber][color] & (1 << i)) {
+++                    furi_hal_gpio_write(LED_PIN, true);
+++                    uint32_t start = DWT->CYCCNT;
+++                    while((DWT->CYCCNT - start) < 31) {
+++                    }
+++                    furi_hal_gpio_write(LED_PIN, false);
+++                    start = DWT->CYCCNT;
+++                    while((DWT->CYCCNT - start) < 15) {
+++                    }
+++                } else {
+++                    furi_hal_gpio_write(LED_PIN, true);
+++                    uint32_t start = DWT->CYCCNT;
+++                    while((DWT->CYCCNT - start) < 15) {
+++                    }
+++                    furi_hal_gpio_write(LED_PIN, false);
+++                    start = DWT->CYCCNT;
+++                    while((DWT->CYCCNT - start) < 31) {
+++                    }
+++                }
+++            }
+++        }
+++    }
+++    furi_kernel_unlock();
+++}
+++
+++static void _port_init(void) {
+++    furi_hal_gpio_init(LED_PIN, GpioModeOutputPushPull, GpioPullNo, GpioSpeedVeryHigh);
+++}
+++
+++uint8_t rgb_backlight_get_color_count(void) {
+++    return COLOR_COUNT;
+++}
+++
+++const char* rgb_backlight_get_color_text(uint8_t index) {
+++    return color_text[index];
+++}
+++
+++static void rgb_backlight_load_settings(void) {
+++    _port_init();
+++    RGBBacklightSettings settings;
+++    File* file = storage_file_alloc(furi_record_open(RECORD_STORAGE));
+++    const size_t settings_size = sizeof(RGBBacklightSettings);
+++
+++    FURI_LOG_I(TAG, "loading settings from \"%s\"", RGB_BACKLIGHT_SETTINGS_PATH);
+++    bool fs_result =
+++        storage_file_open(file, RGB_BACKLIGHT_SETTINGS_PATH, FSAM_READ, FSOM_OPEN_EXISTING);
+++
+++    if(fs_result) {
+++        uint16_t bytes_count = storage_file_read(file, &settings, settings_size);
+++
+++        if(bytes_count != settings_size) {
+++            fs_result = false;
+++        }
+++    }
+++
+++    if(fs_result) {
+++        FURI_LOG_I(TAG, "load success");
+++        if(settings.version != RGB_BACKLIGHT_SETTINGS_VERSION) {
+++            FURI_LOG_E(
+++                TAG,
+++                "version(%d != %d) mismatch",
+++                settings.version,
+++                RGB_BACKLIGHT_SETTINGS_VERSION);
+++        } else {
+++            furi_kernel_lock();
+++            memcpy(&rgb_settings, &settings, settings_size);
+++            furi_kernel_unlock();
+++        }
+++    } else {
+++        FURI_LOG_E(TAG, "load failed, %s", storage_file_get_error_desc(file));
+++    }
+++
+++    storage_file_close(file);
+++    storage_file_free(file);
+++    furi_record_close(RECORD_STORAGE);
+++    rgb_settings.settings_is_loaded = true;
+++};
+++
+++void rgb_backlight_save_settings(void) {
+++    RGBBacklightSettings settings;
+++    File* file = storage_file_alloc(furi_record_open(RECORD_STORAGE));
+++    const size_t settings_size = sizeof(RGBBacklightSettings);
+++
+++    FURI_LOG_I(TAG, "saving settings to \"%s\"", RGB_BACKLIGHT_SETTINGS_PATH);
+++
+++    furi_kernel_lock();
+++    memcpy(&settings, &rgb_settings, settings_size);
+++    furi_kernel_unlock();
+++
+++    bool fs_result =
+++        storage_file_open(file, RGB_BACKLIGHT_SETTINGS_PATH, FSAM_WRITE, FSOM_CREATE_ALWAYS);
+++
+++    if(fs_result) {
+++        uint16_t bytes_count = storage_file_write(file, &settings, settings_size);
+++
+++        if(bytes_count != settings_size) {
+++            fs_result = false;
+++        }
+++    }
+++
+++    if(fs_result) {
+++        FURI_LOG_I(TAG, "save success");
+++    } else {
+++        FURI_LOG_E(TAG, "save failed, %s", storage_file_get_error_desc(file));
+++    }
+++
+++    storage_file_close(file);
+++    storage_file_free(file);
+++    furi_record_close(RECORD_STORAGE);
+++};
+++
+++RGBBacklightSettings* rgb_backlight_get_settings(void) {
+++    if(!rgb_settings.settings_is_loaded) {
+++        rgb_backlight_load_settings();
+++    }
+++    return &rgb_settings;
+++}
+++
+++void rgb_backlight_set_color(uint8_t color_index) {
+++    rgb_settings.display_color_index = color_index;
+++}
+++void rgb_backlight_set_brightness(float brightness) {
+++    rgb_settings.display_brightness = brightness;
+++}
+++
+++void rgb_backlight_update(uint8_t backlight) {
+++    if(!rgb_settings.settings_is_loaded) {
+++        rgb_backlight_load_settings();
+++    }
+++    for(uint8_t i = 0; i < WS2812B_LEDS; i++) {
+++        //Green
+++        WS2812B_ledbuffer[i][0] =
+++            ((color_value[rgb_settings.display_color_index] & 0x00FF00) >> 8) *
+++            (backlight / 255.0f);
+++        //Red
+++        WS2812B_ledbuffer[i][1] =
+++            (color_value[rgb_settings.display_color_index] >> 16) * (backlight / 255.0f);
+++        //Blue
+++        WS2812B_ledbuffer[i][2] =
+++            (color_value[rgb_settings.display_color_index] & 0xFF) * (backlight / 255.0f);
+++    }
+++
+++    WS2812B_send();
+++}
++diff --git a/lib/drivers/WS2812B.h b/lib/drivers/WS2812B.h
++new file mode 100644
++index 00000000..c73d04ee
++--- /dev/null
+++++ b/lib/drivers/WS2812B.h
++@@ -0,0 +1,38 @@
+++/*
+++ * WS2812B.h
+++ *
+++ * Created: 03.05.2018 20:28:20
+++ *  Author: Quenon
+++ */
+++
+++#ifndef WS2812B_H_
+++#define WS2812B_H_
+++
+++#include "furi.h"
+++#include <stdint.h>
+++#include <stdbool.h>
+++#include <input/input.h>
+++
+++typedef struct {
+++    uint8_t version;
+++    uint8_t display_color_index;
+++    float display_brightness;
+++    bool settings_is_loaded;
+++} RGBBacklightSettings;
+++
+++#define LED_PIN &gpio_ext_pa7
+++#define WS2812B_LEDS 3
+++
+++void rgb_backlight_save_settings(void);
+++
+++void rgb_backlight_update(uint8_t backlight);
+++
+++void rgb_backlight_set_color(uint8_t color_index);
+++void rgb_backlight_set_color(uint8_t color_index);
+++void rgb_backlight_set_brightness(float brightness);
+++
+++RGBBacklightSettings* rgb_backlight_get_settings(void);
+++uint8_t rgb_backlight_get_color_count(void);
+++const char* rgb_backlight_get_color_text(uint8_t index);
+++
+++#endif /* WS2812B_H_ */
++\ No newline at end of file
++-- 
++2.37.2.windows.2
++
+diff --git a/0003-added-new-DFU-fix-from-quen0n.patch b/0003-added-new-DFU-fix-from-quen0n.patch
+new file mode 100644
+index 00000000..e72f977e
+--- /dev/null
++++ b/0003-added-new-DFU-fix-from-quen0n.patch
+@@ -0,0 +1,319 @@
++From ba5b742c5092589abf5f672d173e7e901e7bcd16 Mon Sep 17 00:00:00 2001
++From: Ase1590 <ase1590@hotmail.com>
++Date: Tue, 3 Jan 2023 23:03:29 -0600
++Subject: [PATCH 3/3] added new DFU fix from quen0n
++
++Add commits:
++1423455
++aaf846c
++5e3179d
++fe29ef8
++9f14c36
++e97096c
++from https://github.com/quen0n/flipperzero-firmware-rgb/commits/release
++---
++ .../notification_settings_app.c               |  13 +--
++ lib/drivers/WS2812B.c                         | 109 +++++++++---------
++ lib/drivers/WS2812B.h                         |  30 +++--
++ 3 files changed, 80 insertions(+), 72 deletions(-)
++
++diff --git a/applications/settings/notification_settings/notification_settings_app.c b/applications/settings/notification_settings/notification_settings_app.c
++index 88266b78..4792d012 100644
++--- a/applications/settings/notification_settings/notification_settings_app.c
+++++ b/applications/settings/notification_settings/notification_settings_app.c
++@@ -47,22 +47,16 @@ const char* const volume_text[VOLUME_COUNT] = {
++ };
++ const float volume_value[VOLUME_COUNT] = {0.0f, 0.25f, 0.5f, 0.75f, 1.0f};
++ 
++-#define DELAY_COUNT 11
+++#define DELAY_COUNT 6
++ const char* const delay_text[DELAY_COUNT] = {
++     "1s",
++     "5s",
++-    "10s",
++     "15s",
++     "30s",
++     "60s",
++-    "90s",
++     "120s",
++-    "5min",
++-    "10min",
++-    "30min",
++ };
++-const uint32_t delay_value[DELAY_COUNT] =
++-    {1000, 5000, 10000, 15000, 30000, 60000, 90000, 120000, 300000, 600000, 1800000};
+++const uint32_t delay_value[DELAY_COUNT] = {1000, 5000, 15000, 30000, 60000, 120000};
++ 
++ #define VIBRO_COUNT 2
++ const char* const vibro_text[VIBRO_COUNT] = {
++@@ -74,10 +68,8 @@ const bool vibro_value[VIBRO_COUNT] = {false, true};
++ static void backlight_changed(VariableItem* item) {
++     NotificationAppSettings* app = variable_item_get_context(item);
++     uint8_t index = variable_item_get_current_value_index(item);
++-    rgb_backlight_set_brightness(app->notification->settings.display_brightness);
++     variable_item_set_current_value_text(item, backlight_text[index]);
++     app->notification->settings.display_brightness = backlight_value[index];
++-    furi_delay_ms(1);
++     notification_message(app->notification, &sequence_display_backlight_on);
++ }
++ 
++@@ -131,7 +123,6 @@ static void color_changed(VariableItem* item) {
++     NotificationAppSettings* app = variable_item_get_context(item);
++     uint8_t index = variable_item_get_current_value_index(item);
++     rgb_backlight_set_color(index);
++-    furi_delay_ms(1);
++     variable_item_set_current_value_text(item, rgb_backlight_get_color_text(index));
++     notification_message(app->notification, &sequence_display_backlight_on);
++ }
++diff --git a/lib/drivers/WS2812B.c b/lib/drivers/WS2812B.c
++index b72a477d..319668fc 100644
++--- a/lib/drivers/WS2812B.c
+++++ b/lib/drivers/WS2812B.c
++@@ -1,9 +1,21 @@
++ /*
++- * WS2812B.c
++- *
++- * Created: 03.05.2018 20:28:37
++- *  Author: Quenon
++- */
+++    WS2812B FlipperZero driver
+++    Copyright (C) 2022  Victor Nikitchuk (https://github.com/quen0n)
+++
+++    This program is free software: you can redistribute it and/or modify
+++    it under the terms of the GNU General Public License as published by
+++    the Free Software Foundation, either version 3 of the License, or
+++    (at your option) any later version.
+++
+++    This program is distributed in the hope that it will be useful,
+++    but WITHOUT ANY WARRANTY; without even the implied warranty of
+++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+++    GNU General Public License for more details.
+++
+++    You should have received a copy of the GNU General Public License
+++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+++*/
+++
++ #include "WS2812B.h"
++ #include <string.h>
++ #include <stm32wbxx.h>
++@@ -14,7 +26,7 @@
++ #include <input/input.h>
++ 
++ #define TAG "RGB Backlight"
++-#define RGB_BACKLIGHT_SETTINGS_VERSION 3
+++#define RGB_BACKLIGHT_SETTINGS_VERSION 5
++ #define RGB_BACKLIGHT_SETTINGS_FILE_NAME ".rgb_backlight.settings"
++ #define RGB_BACKLIGHT_SETTINGS_PATH EXT_PATH(RGB_BACKLIGHT_SETTINGS_FILE_NAME)
++ 
++@@ -22,45 +34,39 @@ static uint8_t WS2812B_ledbuffer[WS2812B_LEDS][3];
++ 
++ static RGBBacklightSettings rgb_settings = {
++     .version = RGB_BACKLIGHT_SETTINGS_VERSION,
++-    .display_brightness = 1.0f,
++     .display_color_index = 0,
++     .settings_is_loaded = false};
++ 
++-#define COLOR_COUNT (sizeof(color_value) / sizeof(uint32_t))
++-const char* color_text[] = {
++-    "Orange",
++-    "Yellow",
++-    "Lime",
++-    "Olive",
++-    "Green",
++-    "Teal",
++-    "Blue",
++-    "Aqua",
++-    "Fuchsia",
++-    "Red",
++-    "White"};
++-const uint32_t color_value[] = {
++-    //R G B
++-    0xFF4500, //Orange
++-    0xFFFF00, //Yellow
++-    0x00FF00, //Lime
++-    0x808000, //Olive
++-    0x008000, //Green
++-    0x008080, //Teal
++-    0x0000FF, //Blue
++-    0x00FFFF, //Aqua
++-    0xFF00FF, //Fuchsia
++-    0xFF0000, //Red
++-    0xFFFFE0, //White
+++#define COLOR_COUNT (sizeof(colors) / sizeof(WS2812B_Color))
+++
+++const WS2812B_Color colors[] = {
+++    {"Orange", 255, 79, 0},
+++    {"Yellow", 255, 170, 0},
+++    {"Spring", 167, 255, 0},
+++    {"Lime", 0, 255, 0},
+++    {"Aqua", 0, 255, 127},
+++    {"Cyan", 0, 210, 210},
+++    {"Azure", 0, 127, 255},
+++    {"Blue", 0, 0, 255},
+++    {"Purple", 127, 0, 255},
+++    {"Magenta", 210, 0, 210},
+++    {"Pink", 255, 0, 127},
+++    {"Red", 255, 0, 0},
+++    {"White", 140, 140, 140},
++ };
++ 
+++static void _port_init(void) {
+++    furi_hal_gpio_init(LED_PIN, GpioModeOutputPushPull, GpioPullNo, GpioSpeedVeryHigh);
+++}
+++
++ void WS2812B_send(void) {
+++    _port_init();
++     furi_kernel_lock();
++-    /* ╨Я╨╛╤Б╨╗╨╡╨┤╨╛╨▓╨░╤В╨╡╨╗╤М╨╜╨░╤П ╨╛╤В╨┐╤А╨░╨▓╨║╨░ ╤Ж╨▓╨╡╤В╨╛╨▓ ╤Б╨▓╨╡╤В╨╛╨┤╨╕╨╛╨┤╨╛╨▓ */
+++    /* Последовательная отправка цветов светодиодов */
++     for(uint8_t lednumber = 0; lednumber < WS2812B_LEDS; lednumber++) {
++-        //╨Я╨╛╤Б╨╗╨╡╨┤╨╛╨▓╨░╤В╨╡╨╗╤М╨╜╨░╤П ╨╛╤В╨┐╤А╨░╨▓╨║╨░ ╤Ж╨▓╨╡╤В╨╛╨▓ ╤Б╨▓╨╡╤В╨╛╨┤╨╕╨╛╨┤╨░
+++        //Последовательная отправка цветов светодиода
++         for(uint8_t color = 0; color < 3; color++) {
++-            //╨Я╨╛╤Б╨╗╨╡╨┤╨╛╨▓╨░╤В╨╡╨╗╤М╨╜╨░╤П ╨╛╤В╨┐╤А╨░╨▓╨║╨░ ╨▒╨╕╤В╨╛╨▓ ╤Ж╨▓╨╡╤В╨░
+++            //Последовательная отправка битов цвета
++             for(uint8_t i = 7; i != 255; i--) {
++                 if(WS2812B_ledbuffer[lednumber][color] & (1 << i)) {
++                     furi_hal_gpio_write(LED_PIN, true);
++@@ -85,10 +91,8 @@ void WS2812B_send(void) {
++         }
++     }
++     furi_kernel_unlock();
++-}
++-
++-static void _port_init(void) {
++-    furi_hal_gpio_init(LED_PIN, GpioModeOutputPushPull, GpioPullNo, GpioSpeedVeryHigh);
+++    //Необходимая задержка - признак окончания передачи
+++    furi_delay_us(100);
++ }
++ 
++ uint8_t rgb_backlight_get_color_count(void) {
++@@ -96,11 +100,16 @@ uint8_t rgb_backlight_get_color_count(void) {
++ }
++ 
++ const char* rgb_backlight_get_color_text(uint8_t index) {
++-    return color_text[index];
+++    return colors[index].name;
++ }
++ 
++ static void rgb_backlight_load_settings(void) {
++-    _port_init();
+++    FuriHalRtcBootMode bm = furi_hal_rtc_get_boot_mode();
+++    if(bm == FuriHalRtcBootModeDfu) {
+++        rgb_settings.settings_is_loaded = true;
+++        return;
+++    }
+++
++     RGBBacklightSettings settings;
++     File* file = storage_file_alloc(furi_record_open(RECORD_STORAGE));
++     const size_t settings_size = sizeof(RGBBacklightSettings);
++@@ -126,9 +135,7 @@ static void rgb_backlight_load_settings(void) {
++                 settings.version,
++                 RGB_BACKLIGHT_SETTINGS_VERSION);
++         } else {
++-            furi_kernel_lock();
++             memcpy(&rgb_settings, &settings, settings_size);
++-            furi_kernel_unlock();
++         }
++     } else {
++         FURI_LOG_E(TAG, "load failed, %s", storage_file_get_error_desc(file));
++@@ -147,9 +154,7 @@ void rgb_backlight_save_settings(void) {
++ 
++     FURI_LOG_I(TAG, "saving settings to \"%s\"", RGB_BACKLIGHT_SETTINGS_PATH);
++ 
++-    furi_kernel_lock();
++     memcpy(&settings, &rgb_settings, settings_size);
++-    furi_kernel_unlock();
++ 
++     bool fs_result =
++         storage_file_open(file, RGB_BACKLIGHT_SETTINGS_PATH, FSAM_WRITE, FSOM_CREATE_ALWAYS);
++@@ -183,9 +188,6 @@ RGBBacklightSettings* rgb_backlight_get_settings(void) {
++ void rgb_backlight_set_color(uint8_t color_index) {
++     rgb_settings.display_color_index = color_index;
++ }
++-void rgb_backlight_set_brightness(float brightness) {
++-    rgb_settings.display_brightness = brightness;
++-}
++ 
++ void rgb_backlight_update(uint8_t backlight) {
++     if(!rgb_settings.settings_is_loaded) {
++@@ -194,15 +196,14 @@ void rgb_backlight_update(uint8_t backlight) {
++     for(uint8_t i = 0; i < WS2812B_LEDS; i++) {
++         //Green
++         WS2812B_ledbuffer[i][0] =
++-            ((color_value[rgb_settings.display_color_index] & 0x00FF00) >> 8) *
++-            (backlight / 255.0f);
+++            colors[rgb_settings.display_color_index].green * (backlight / 255.0f);
++         //Red
++         WS2812B_ledbuffer[i][1] =
++-            (color_value[rgb_settings.display_color_index] >> 16) * (backlight / 255.0f);
+++            colors[rgb_settings.display_color_index].red * (backlight / 255.0f);
++         //Blue
++         WS2812B_ledbuffer[i][2] =
++-            (color_value[rgb_settings.display_color_index] & 0xFF) * (backlight / 255.0f);
+++            colors[rgb_settings.display_color_index].blue * (backlight / 255.0f);
++     }
++ 
++     WS2812B_send();
++-}
+++}
++\ No newline at end of file
++diff --git a/lib/drivers/WS2812B.h b/lib/drivers/WS2812B.h
++index c73d04ee..4f0dfabc 100644
++--- a/lib/drivers/WS2812B.h
+++++ b/lib/drivers/WS2812B.h
++@@ -1,9 +1,20 @@
++ /*
++- * WS2812B.h
++- *
++- * Created: 03.05.2018 20:28:20
++- *  Author: Quenon
++- */
+++    WS2812B FlipperZero driver
+++    Copyright (C) 2022  Victor Nikitchuk (https://github.com/quen0n)
+++
+++    This program is free software: you can redistribute it and/or modify
+++    it under the terms of the GNU General Public License as published by
+++    the Free Software Foundation, either version 3 of the License, or
+++    (at your option) any later version.
+++
+++    This program is distributed in the hope that it will be useful,
+++    but WITHOUT ANY WARRANTY; without even the implied warranty of
+++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+++    GNU General Public License for more details.
+++
+++    You should have received a copy of the GNU General Public License
+++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+++*/
++ 
++ #ifndef WS2812B_H_
++ #define WS2812B_H_
++@@ -16,10 +27,16 @@
++ typedef struct {
++     uint8_t version;
++     uint8_t display_color_index;
++-    float display_brightness;
++     bool settings_is_loaded;
++ } RGBBacklightSettings;
++ 
+++typedef struct {
+++    char* name;
+++    uint8_t red;
+++    uint8_t green;
+++    uint8_t blue;
+++} WS2812B_Color;
+++
++ #define LED_PIN &gpio_ext_pa7
++ #define WS2812B_LEDS 3
++ 
++@@ -29,7 +46,6 @@ void rgb_backlight_update(uint8_t backlight);
++ 
++ void rgb_backlight_set_color(uint8_t color_index);
++ void rgb_backlight_set_color(uint8_t color_index);
++-void rgb_backlight_set_brightness(float brightness);
++ 
++ RGBBacklightSettings* rgb_backlight_get_settings(void);
++ uint8_t rgb_backlight_get_color_count(void);
++-- 
++2.37.2.windows.2
++
+diff --git a/applications/settings/notification_settings/notification_settings_app.c b/applications/settings/notification_settings/notification_settings_app.c
+index d462163a..4792d012 100644
+--- a/applications/settings/notification_settings/notification_settings_app.c
++++ b/applications/settings/notification_settings/notification_settings_app.c
+@@ -3,6 +3,7 @@
+ #include <gui/modules/variable_item_list.h>
+ #include <gui/view_dispatcher.h>
+ #include <lib/toolbox/value_index.h>
++#include <lib/drivers/WS2812B.h>
+ 
+ #define MAX_NOTIFICATION_SETTINGS 4
+ 
+@@ -67,7 +68,6 @@ const bool vibro_value[VIBRO_COUNT] = {false, true};
+ static void backlight_changed(VariableItem* item) {
+     NotificationAppSettings* app = variable_item_get_context(item);
+     uint8_t index = variable_item_get_current_value_index(item);
+-
+     variable_item_set_current_value_text(item, backlight_text[index]);
+     app->notification->settings.display_brightness = backlight_value[index];
+     notification_message(app->notification, &sequence_display_backlight_on);
+@@ -119,8 +119,17 @@ static void vibro_changed(VariableItem* item) {
+     notification_message(app->notification, &sequence_single_vibro);
+ }
+ 
++static void color_changed(VariableItem* item) {
++    NotificationAppSettings* app = variable_item_get_context(item);
++    uint8_t index = variable_item_get_current_value_index(item);
++    rgb_backlight_set_color(index);
++    variable_item_set_current_value_text(item, rgb_backlight_get_color_text(index));
++    notification_message(app->notification, &sequence_display_backlight_on);
++}
++
+ static uint32_t notification_app_settings_exit(void* context) {
+     UNUSED(context);
++    rgb_backlight_save_settings();
+     return VIEW_NONE;
+ }
+ 
+@@ -143,6 +152,12 @@ static NotificationAppSettings* alloc_settings() {
+     variable_item_set_current_value_index(item, value_index);
+     variable_item_set_current_value_text(item, backlight_text[value_index]);
+ 
++    item = variable_item_list_add(
++        app->variable_item_list, "LCD Color", rgb_backlight_get_color_count(), color_changed, app);
++    value_index = rgb_backlight_get_settings()->display_color_index;
++    variable_item_set_current_value_index(item, value_index);
++    variable_item_set_current_value_text(item, rgb_backlight_get_color_text(value_index));
++
+     item = variable_item_list_add(
+         app->variable_item_list, "Backlight Time", DELAY_COUNT, screen_changed, app);
+     value_index = value_index_uint32(
+@@ -194,6 +209,7 @@ int32_t notification_settings_app(void* p) {
+     NotificationAppSettings* app = alloc_settings();
+     view_dispatcher_run(app->view_dispatcher);
+     notification_message_save_settings(app->notification);
++
+     free_settings(app);
+     return 0;
+ }
+diff --git a/firmware/targets/f7/furi_hal/furi_hal_light.c b/firmware/targets/f7/furi_hal/furi_hal_light.c
+index e6b3ab7d..c21c4723 100644
+--- a/firmware/targets/f7/furi_hal/furi_hal_light.c
++++ b/firmware/targets/f7/furi_hal/furi_hal_light.c
+@@ -3,6 +3,7 @@
+ #include <furi_hal_light.h>
+ #include <lp5562.h>
+ #include <stdint.h>
++#include <WS2812B.h>
+ 
+ #define LED_CURRENT_RED 50
+ #define LED_CURRENT_GREEN 50
+@@ -42,9 +43,7 @@ void furi_hal_light_set(Light light, uint8_t value) {
+         lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelBlue, value);
+     }
+     if(light & LightBacklight) {
+-        uint8_t prev = lp5562_get_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelWhite);
+-        lp5562_execute_ramp(
+-            &furi_hal_i2c_handle_power, LP5562Engine1, LP5562ChannelWhite, prev, value, 100);
++        rgb_backlight_update(value);
+     }
+     furi_hal_i2c_release(&furi_hal_i2c_handle_power);
+ }
+diff --git a/lib/drivers/WS2812B.c b/lib/drivers/WS2812B.c
+new file mode 100644
+index 00000000..319668fc
+--- /dev/null
++++ b/lib/drivers/WS2812B.c
+@@ -0,0 +1,209 @@
++/*
++    WS2812B FlipperZero driver
++    Copyright (C) 2022  Victor Nikitchuk (https://github.com/quen0n)
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++#include "WS2812B.h"
++#include <string.h>
++#include <stm32wbxx.h>
++#include "furi_hal_light.h"
++#include <furi.h>
++#include <furi_hal.h>
++#include <storage/storage.h>
++#include <input/input.h>
++
++#define TAG "RGB Backlight"
++#define RGB_BACKLIGHT_SETTINGS_VERSION 5
++#define RGB_BACKLIGHT_SETTINGS_FILE_NAME ".rgb_backlight.settings"
++#define RGB_BACKLIGHT_SETTINGS_PATH EXT_PATH(RGB_BACKLIGHT_SETTINGS_FILE_NAME)
++
++static uint8_t WS2812B_ledbuffer[WS2812B_LEDS][3];
++
++static RGBBacklightSettings rgb_settings = {
++    .version = RGB_BACKLIGHT_SETTINGS_VERSION,
++    .display_color_index = 0,
++    .settings_is_loaded = false};
++
++#define COLOR_COUNT (sizeof(colors) / sizeof(WS2812B_Color))
++
++const WS2812B_Color colors[] = {
++    {"Orange", 255, 79, 0},
++    {"Yellow", 255, 170, 0},
++    {"Spring", 167, 255, 0},
++    {"Lime", 0, 255, 0},
++    {"Aqua", 0, 255, 127},
++    {"Cyan", 0, 210, 210},
++    {"Azure", 0, 127, 255},
++    {"Blue", 0, 0, 255},
++    {"Purple", 127, 0, 255},
++    {"Magenta", 210, 0, 210},
++    {"Pink", 255, 0, 127},
++    {"Red", 255, 0, 0},
++    {"White", 140, 140, 140},
++};
++
++static void _port_init(void) {
++    furi_hal_gpio_init(LED_PIN, GpioModeOutputPushPull, GpioPullNo, GpioSpeedVeryHigh);
++}
++
++void WS2812B_send(void) {
++    _port_init();
++    furi_kernel_lock();
++    /* Последовательная отправка цветов светодиодов */
++    for(uint8_t lednumber = 0; lednumber < WS2812B_LEDS; lednumber++) {
++        //Последовательная отправка цветов светодиода
++        for(uint8_t color = 0; color < 3; color++) {
++            //Последовательная отправка битов цвета
++            for(uint8_t i = 7; i != 255; i--) {
++                if(WS2812B_ledbuffer[lednumber][color] & (1 << i)) {
++                    furi_hal_gpio_write(LED_PIN, true);
++                    uint32_t start = DWT->CYCCNT;
++                    while((DWT->CYCCNT - start) < 31) {
++                    }
++                    furi_hal_gpio_write(LED_PIN, false);
++                    start = DWT->CYCCNT;
++                    while((DWT->CYCCNT - start) < 15) {
++                    }
++                } else {
++                    furi_hal_gpio_write(LED_PIN, true);
++                    uint32_t start = DWT->CYCCNT;
++                    while((DWT->CYCCNT - start) < 15) {
++                    }
++                    furi_hal_gpio_write(LED_PIN, false);
++                    start = DWT->CYCCNT;
++                    while((DWT->CYCCNT - start) < 31) {
++                    }
++                }
++            }
++        }
++    }
++    furi_kernel_unlock();
++    //Необходимая задержка - признак окончания передачи
++    furi_delay_us(100);
++}
++
++uint8_t rgb_backlight_get_color_count(void) {
++    return COLOR_COUNT;
++}
++
++const char* rgb_backlight_get_color_text(uint8_t index) {
++    return colors[index].name;
++}
++
++static void rgb_backlight_load_settings(void) {
++    FuriHalRtcBootMode bm = furi_hal_rtc_get_boot_mode();
++    if(bm == FuriHalRtcBootModeDfu) {
++        rgb_settings.settings_is_loaded = true;
++        return;
++    }
++
++    RGBBacklightSettings settings;
++    File* file = storage_file_alloc(furi_record_open(RECORD_STORAGE));
++    const size_t settings_size = sizeof(RGBBacklightSettings);
++
++    FURI_LOG_I(TAG, "loading settings from \"%s\"", RGB_BACKLIGHT_SETTINGS_PATH);
++    bool fs_result =
++        storage_file_open(file, RGB_BACKLIGHT_SETTINGS_PATH, FSAM_READ, FSOM_OPEN_EXISTING);
++
++    if(fs_result) {
++        uint16_t bytes_count = storage_file_read(file, &settings, settings_size);
++
++        if(bytes_count != settings_size) {
++            fs_result = false;
++        }
++    }
++
++    if(fs_result) {
++        FURI_LOG_I(TAG, "load success");
++        if(settings.version != RGB_BACKLIGHT_SETTINGS_VERSION) {
++            FURI_LOG_E(
++                TAG,
++                "version(%d != %d) mismatch",
++                settings.version,
++                RGB_BACKLIGHT_SETTINGS_VERSION);
++        } else {
++            memcpy(&rgb_settings, &settings, settings_size);
++        }
++    } else {
++        FURI_LOG_E(TAG, "load failed, %s", storage_file_get_error_desc(file));
++    }
++
++    storage_file_close(file);
++    storage_file_free(file);
++    furi_record_close(RECORD_STORAGE);
++    rgb_settings.settings_is_loaded = true;
++};
++
++void rgb_backlight_save_settings(void) {
++    RGBBacklightSettings settings;
++    File* file = storage_file_alloc(furi_record_open(RECORD_STORAGE));
++    const size_t settings_size = sizeof(RGBBacklightSettings);
++
++    FURI_LOG_I(TAG, "saving settings to \"%s\"", RGB_BACKLIGHT_SETTINGS_PATH);
++
++    memcpy(&settings, &rgb_settings, settings_size);
++
++    bool fs_result =
++        storage_file_open(file, RGB_BACKLIGHT_SETTINGS_PATH, FSAM_WRITE, FSOM_CREATE_ALWAYS);
++
++    if(fs_result) {
++        uint16_t bytes_count = storage_file_write(file, &settings, settings_size);
++
++        if(bytes_count != settings_size) {
++            fs_result = false;
++        }
++    }
++
++    if(fs_result) {
++        FURI_LOG_I(TAG, "save success");
++    } else {
++        FURI_LOG_E(TAG, "save failed, %s", storage_file_get_error_desc(file));
++    }
++
++    storage_file_close(file);
++    storage_file_free(file);
++    furi_record_close(RECORD_STORAGE);
++};
++
++RGBBacklightSettings* rgb_backlight_get_settings(void) {
++    if(!rgb_settings.settings_is_loaded) {
++        rgb_backlight_load_settings();
++    }
++    return &rgb_settings;
++}
++
++void rgb_backlight_set_color(uint8_t color_index) {
++    rgb_settings.display_color_index = color_index;
++}
++
++void rgb_backlight_update(uint8_t backlight) {
++    if(!rgb_settings.settings_is_loaded) {
++        rgb_backlight_load_settings();
++    }
++    for(uint8_t i = 0; i < WS2812B_LEDS; i++) {
++        //Green
++        WS2812B_ledbuffer[i][0] =
++            colors[rgb_settings.display_color_index].green * (backlight / 255.0f);
++        //Red
++        WS2812B_ledbuffer[i][1] =
++            colors[rgb_settings.display_color_index].red * (backlight / 255.0f);
++        //Blue
++        WS2812B_ledbuffer[i][2] =
++            colors[rgb_settings.display_color_index].blue * (backlight / 255.0f);
++    }
++
++    WS2812B_send();
++}
+\ No newline at end of file
+diff --git a/lib/drivers/WS2812B.h b/lib/drivers/WS2812B.h
+new file mode 100644
+index 00000000..4f0dfabc
+--- /dev/null
++++ b/lib/drivers/WS2812B.h
+@@ -0,0 +1,54 @@
++/*
++    WS2812B FlipperZero driver
++    Copyright (C) 2022  Victor Nikitchuk (https://github.com/quen0n)
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++#ifndef WS2812B_H_
++#define WS2812B_H_
++
++#include "furi.h"
++#include <stdint.h>
++#include <stdbool.h>
++#include <input/input.h>
++
++typedef struct {
++    uint8_t version;
++    uint8_t display_color_index;
++    bool settings_is_loaded;
++} RGBBacklightSettings;
++
++typedef struct {
++    char* name;
++    uint8_t red;
++    uint8_t green;
++    uint8_t blue;
++} WS2812B_Color;
++
++#define LED_PIN &gpio_ext_pa7
++#define WS2812B_LEDS 3
++
++void rgb_backlight_save_settings(void);
++
++void rgb_backlight_update(uint8_t backlight);
++
++void rgb_backlight_set_color(uint8_t color_index);
++void rgb_backlight_set_color(uint8_t color_index);
++
++RGBBacklightSettings* rgb_backlight_get_settings(void);
++uint8_t rgb_backlight_get_color_count(void);
++const char* rgb_backlight_get_color_text(uint8_t index);
++
++#endif /* WS2812B_H_ */
+\ No newline at end of file
+-- 
+2.37.2.windows.2
+

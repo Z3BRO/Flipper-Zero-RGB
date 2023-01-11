@@ -24,7 +24,7 @@ All of the repos below have been modified with their respective patches
 
 Unleashed - https://github.com/Z3BRO/RGB-unleashed-firmware/tree/RGB
 
-OFW - https://github.com/Z3BRO/flipperzero-firmware/tree/RGB
+OFW - https://github.com/flipperdevices/flipperzero-firmware
 
 # How to compile from the repos above 
 

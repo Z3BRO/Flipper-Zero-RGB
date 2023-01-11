@@ -5,7 +5,7 @@ Big thanks to Quenon#1989 and axum#6461 for making this possible!
 
 Here is a Tutorial made by t.me/hitriy https://telegra.ph/Flipper-Zero-RGB-backlight-guide-12-26
 
-Another Tutorial on how to remove the led backlight board (not 100% sure who made it) https://telegra.ph/Izmenenie-cveta-podsvetki-Flipper-Zero-11-14 you will need to translate it unless you speak russian
+Another Tutorial on how to remove the led backlight board (also made by t.me/hitriy) https://telegra.ph/Izmenenie-cveta-podsvetki-Flipper-Zero-11-14 you will need to translate it unless you speak russian
 
 
 # Here are the links to everything you will need!

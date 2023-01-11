@@ -1,6 +1,6 @@
 # Flipper-Zero-RBG-Backlight
 
-Big thanks to Quenon#1989 and axum#6461 for making this possible!
+Big thanks to Quenon#1989,t.me/hitriy and axum#6461 for making this possible!
 
 
 Here is a Tutorial made by t.me/hitriy https://telegra.ph/Flipper-Zero-RGB-backlight-guide-12-26
@@ -20,7 +20,7 @@ Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY
 
 # Firmware stuff
 
-All of the repos below have been modified with their respective patches
+All of the repos below have been modified with their respective patches (FW Made by Quenon#1989)
 
 Unleashed - https://github.com/quen0n/unleashed-firmware-rgb
 
@@ -66,7 +66,7 @@ Step 4: Copy the desired folder to the Update Folder on your Flipper
 Step 5: On your Flipper Navigate to the Update folder
 
 
-Step 6: Open the folder you just added ( Either OFW-0.74.2-RGB or Unleashed22-RGB)
+Step 6: Open the folder you just added to the sd card
 
 
 Step 7: Update from the update.fuf file  ( It will have a picture of a box with an arrow next to it)

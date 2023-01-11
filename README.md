@@ -31,25 +31,22 @@ OFW - https://github.com/quen0n/flipperzero-firmware-rgb
 Step 1: git clone --recursive FIRMWARELINKFROMABOVE
 
 
-Step 2: git switch RGB
+Step 2: ./fbt updater_package
 
 
-Step 3: ./fbt updater_package
+Step 3: Navigate to dist\f7-D\ in the cloned repos folder ( Usually found at Documents\GitHub)
 
 
-Step 4: Navigate to dist\f7-D\ in the cloned repos folder ( Usually found at Documents\GitHub)
+Step 4: Copy the f7-update-local folder to the Update folder on your Flipper
 
 
-Step 5: Copy the f7-update-local folder to the Update folder on your Flipper
+Step 5: On your Flipper Navigate to the Update folder
 
 
-Step 6: On your Flipper Navigate to the Update folder
+Step 6: Open the f7-update-local folder
 
 
-Step 7: Open the f7-update-local folder
-
-
-Step 8: Update from the update.fuf file  ( It will have a picture of a box with an arrow next to it)
+Step 7: Update from the update.fuf file  ( It will have a picture of a box with an arrow next to it)
 
 
 # How to update from the pre compiled firmware

@@ -2,10 +2,16 @@
 
 Big thanks to Quenon#1989,t.me/hitriy and axum#6461 for making this possible!
 
+# Tutorials
 
+## Full Build Guides
 Here is a Tutorial made by t.me/hitriy https://telegra.ph/Flipper-Zero-RGB-backlight-guide-12-26
 
 Another Tutorial on how to remove the led backlight board (also made by t.me/hitriy) https://telegra.ph/Izmenenie-cveta-podsvetki-Flipper-Zero-11-14 you will need to translate it unless you speak russian
+
+## PCB Assembly
+
+Here is a video i made on assembling the pcb https://youtu.be/N64fDjziTaE
 
 
 # Here are the links to everything you will need!
@@ -17,6 +23,8 @@ Capacitors - https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT
 Leds, Pack of 10 - https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136
 
 Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY6
+
+When purchasing the PCB's make sure to have the thickness set to 0.6mm and the layer ammount set as 2.
 
 # Firmware stuff
 
@@ -77,6 +85,5 @@ Step 7: Update from the update.fuf file  ( It will have a picture of a box with 
 
 # Notes
 
-When purchasing the pcb make sure to have the thickness set to 0.6mm and the layer ammount set as 2.
 
 Here is a video on how to use git patch files https://www.youtube.com/watch?v=ArbQNoNlFXk

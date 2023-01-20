@@ -1,6 +1,6 @@
 # DO NOT USE THIS PATCH FILE UNTIL IT IS UPDATED
 
-# This patch file was origionally built by Quenon#1989 and fixed by axum#6461, Huge thanks to those guys!
+## This patch file was origionally built by Quenon#1989 and edited by axum#6461, Huge thanks to those guys!
 
 
 

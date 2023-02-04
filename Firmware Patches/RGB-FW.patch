@@ -1,45 +1,25 @@
-From 56fbff07a541740fef1ac6ca98c795aee499ca37 Mon Sep 17 00:00:00 2001
-From: Z3BRO <101530102+Z3BRO@users.noreply.github.com>
-Date: Thu, 2 Feb 2023 16:07:40 -0600
-Subject: [PATCH] Applied RGB Changes
+From 4346569eea2a5a3b2d822cfef7d52468aed4ceb9 Mon Sep 17 00:00:00 2001
+From: Ari Bytyqi <101530102+Z3BRO@users.noreply.github.com>
+Date: Sat, 4 Feb 2023 11:04:23 -0600
+Subject: [PATCH] RGB Backlight Compatability
 
 ---
- .../services/notification/notification_app.c  |   2 +
  .../notification_settings_app.c               |  19 +-
- .../notification_settings/rgb_backlight.c     | 171 ++++++++++++++++++
- .../notification_settings/rgb_backlight.h     |  79 ++++++++
+ .../notification_settings/rgb_backlight.c     | 171 ++++++++++++++
+ .../notification_settings/rgb_backlight.h     |  79 +++++++
  firmware/targets/f7/furi_hal/furi_hal_light.c |  28 +--
- lib/drivers/SK6805.c                          | 101 +++++++++++
- lib/drivers/SK6805.h                          |  51 ++++++
- scripts/fbt_tools/blackmagic.py               |   7 +-
- scripts/fbt_tools/fbt_debugopts.py            |   1 +
- scripts/toolchain/fbtenv.sh                   |  35 ++--
- 10 files changed, 461 insertions(+), 33 deletions(-)
+ lib/drivers/SK6805.c                          | 101 +++++++++
+ lib/drivers/SK6805.h                          |  51 +++++
+ lib/drivers/WS2812B.c                         | 212 ++++++++++++++++++
+ lib/drivers/WS2812B.h                         |  54 +++++
+ 8 files changed, 699 insertions(+), 16 deletions(-)
  create mode 100644 applications/settings/notification_settings/rgb_backlight.c
  create mode 100644 applications/settings/notification_settings/rgb_backlight.h
  create mode 100644 lib/drivers/SK6805.c
  create mode 100644 lib/drivers/SK6805.h
+ create mode 100644 lib/drivers/WS2812B.c
+ create mode 100644 lib/drivers/WS2812B.h
 
-diff --git a/applications/services/notification/notification_app.c b/applications/services/notification/notification_app.c
-index b6579f54..b7aee666 100644
---- a/applications/services/notification/notification_app.c
-+++ b/applications/services/notification/notification_app.c
-@@ -6,6 +6,7 @@
- #include "notification.h"
- #include "notification_messages.h"
- #include "notification_app.h"
-+#include "applications/settings/notification_settings/rgb_backlight.h"
- 
- #define TAG "NotificationSrv"
- 
-@@ -555,6 +556,7 @@ int32_t notification_srv(void* p) {
-             break;
-         case SaveSettingsMessage:
-             notification_save_settings(app);
-+            rgb_backlight_save_settings();
-             break;
-         }
- 
 diff --git a/applications/settings/notification_settings/notification_settings_app.c b/applications/settings/notification_settings/notification_settings_app.c
 index d462163a..5d4da77c 100644
 --- a/applications/settings/notification_settings/notification_settings_app.c
@@ -574,121 +554,285 @@ index 00000000..57f02344
 +
 +#endif /* SK6805_H_ */
 \ No newline at end of file
-diff --git a/scripts/fbt_tools/blackmagic.py b/scripts/fbt_tools/blackmagic.py
-index 0b114268..402c3049 100644
---- a/scripts/fbt_tools/blackmagic.py
-+++ b/scripts/fbt_tools/blackmagic.py
-@@ -28,7 +28,12 @@ class BlackmagicResolver:
-         else:
-             # If you're getting any issues with auto lookup, uncomment this
-             # print("\n".join([f"{p.device} {vars(p)}" for p in ports]))
--            return sorted(ports, key=lambda p: f"{p.location}_{p.name}")[0]
-+            port_list = sorted(ports, key=lambda p: f"{p.location}_{p.name}")
-+            for port in port_list:
-+                if str(port.location) == "None":
-+                    return port
-+            raise StopError("Blackmagic probe not found")
-+            
- 
-     # Look up blackmagic probe hostname with dns
-     def _resolve_hostname(self):
-diff --git a/scripts/fbt_tools/fbt_debugopts.py b/scripts/fbt_tools/fbt_debugopts.py
-index f4b021c2..9abe5989 100644
---- a/scripts/fbt_tools/fbt_debugopts.py
-+++ b/scripts/fbt_tools/fbt_debugopts.py
-@@ -47,6 +47,7 @@ def generate(env, **kw):
-             "source ${FBT_DEBUG_DIR}/gdbinit",
-         ],
-         GDBOPTS_BLACKMAGIC=[
-+            "-q",
-             "-ex",
-             "monitor swdp_scan",
-             "-ex",
-diff --git a/scripts/toolchain/fbtenv.sh b/scripts/toolchain/fbtenv.sh
-index dd5484aa..e2780871 100755
---- a/scripts/toolchain/fbtenv.sh
-+++ b/scripts/toolchain/fbtenv.sh
-@@ -43,11 +43,9 @@ fbtenv_restore_env()
- 
-     PYTHONNOUSERSITE="$SAVED_PYTHONNOUSERSITE";
-     PYTHONPATH="$SAVED_PYTHONPATH";
--    PYTHONHOME="$SAVED_PYTHONHOME";
- 
-     unset SAVED_PYTHONNOUSERSITE;
-     unset SAVED_PYTHONPATH;
--    unset SAVED_PYTHONHOME;
- 
-     unset SCRIPT_PATH;
-     unset FBT_TOOLCHAIN_VERSION;
-@@ -71,7 +69,7 @@ fbtenv_check_sourced()
-     return 1;
- }
- 
--fbtenv_check_if_sourced_multiple_times()
-+fbtenv_chck_many_source()
- {
-     if ! echo "${PS1:-""}" | grep -qF "[fbt]"; then
-         if ! echo "${PROMPT:-""}" | grep -qF "[fbt]"; then
-@@ -109,17 +107,24 @@ fbtenv_get_kernel_type()
- {
-     SYS_TYPE="$(uname -s)";
-     ARCH_TYPE="$(uname -m)";
--    if [ "$ARCH_TYPE" != "x86_64" ] && [ "$SYS_TYPE" != "Darwin" ]; then
--        echo "We only provide toolchain for x86_64 CPUs, sorry..";
--        return 1;
--    fi
+diff --git a/lib/drivers/WS2812B.c b/lib/drivers/WS2812B.c
+new file mode 100644
+index 00000000..598dfba0
+--- /dev/null
++++ b/lib/drivers/WS2812B.c
+@@ -0,0 +1,212 @@
++/*
++    WS2812B FlipperZero driver
++    Copyright (C) 2022  Victor Nikitchuk (https://github.com/quen0n)
 +
-     if [ "$SYS_TYPE" = "Darwin" ]; then
-         fbtenv_check_rosetta || return 1;
-         TOOLCHAIN_ARCH_DIR="$FBT_TOOLCHAIN_PATH/toolchain/x86_64-darwin";
--        TOOLCHAIN_URL="https://update.flipperzero.one/builds/toolchain/gcc-arm-none-eabi-10.3-x86_64-darwin-flipper-$FBT_TOOLCHAIN_VERSION.tar.gz";
-+        if [ -z "${FBT_TOOLS_CUSTOM_LINK:-}" ]; then
-+            TOOLCHAIN_URL="https://update.flipperzero.one/builds/toolchain/gcc-arm-none-eabi-10.3-x86_64-darwin-flipper-$FBT_TOOLCHAIN_VERSION.tar.gz";
-+        else
-+            echo "info: custom toolchain link is used";
-+            TOOLCHAIN_URL=$FBT_TOOLS_CUSTOM_LINK;
-+        fi
-     elif [ "$SYS_TYPE" = "Linux" ]; then
-         TOOLCHAIN_ARCH_DIR="$FBT_TOOLCHAIN_PATH/toolchain/x86_64-linux";
--        TOOLCHAIN_URL="https://update.flipperzero.one/builds/toolchain/gcc-arm-none-eabi-10.3-x86_64-linux-flipper-$FBT_TOOLCHAIN_VERSION.tar.gz";
-+        if [ -z "${FBT_TOOLS_CUSTOM_LINK:-}" ]; then
-+            TOOLCHAIN_URL="https://update.flipperzero.one/builds/toolchain/gcc-arm-none-eabi-10.3-x86_64-linux-flipper-$FBT_TOOLCHAIN_VERSION.tar.gz";
-+        else
-+            echo "info: custom toolchain link is used";
-+            TOOLCHAIN_URL=$FBT_TOOLS_CUSTOM_LINK;
-+        fi
-     elif echo "$SYS_TYPE" | grep -q "MINGW"; then
-         echo "In MinGW shell use \"[u]fbt.cmd\" instead of \"[u]fbt\"";
-         return 1;
-@@ -277,22 +282,20 @@ fbtenv_main()
-         fbtenv_restore_env;
-         return 0;
-     fi
--    fbtenv_check_if_sourced_multiple_times;  # many source it's just a warning
-+    fbtenv_chck_many_source;  # many source it's just a warning
-     fbtenv_check_script_path || return 1;
-     fbtenv_check_download_toolchain || return 1;
-     fbtenv_set_shell_prompt;
--    PATH="$TOOLCHAIN_ARCH_DIR/python/bin:$PATH";
-+    #PATH="$TOOLCHAIN_ARCH_DIR/python/bin:$PATH";
-     PATH="$TOOLCHAIN_ARCH_DIR/bin:$PATH";
--    PATH="$TOOLCHAIN_ARCH_DIR/protobuf/bin:$PATH";
-+    #PATH="$TOOLCHAIN_ARCH_DIR/protobuf/bin:$PATH";
-     PATH="$TOOLCHAIN_ARCH_DIR/openocd/bin:$PATH";
--
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++#include "WS2812B.h"
++#include <string.h>
++#include <stm32wbxx.h>
++#include "furi_hal_light.h"
++#include <furi.h>
++#include <furi_hal.h>
++#include <storage/storage.h>
++#include <input/input.h>
++
++#define TAG "RGB Backlight"
++#define RGB_BACKLIGHT_SETTINGS_VERSION 5
++#define RGB_BACKLIGHT_SETTINGS_FILE_NAME ".rgb_backlight.settings"
++#define RGB_BACKLIGHT_SETTINGS_PATH EXT_PATH(RGB_BACKLIGHT_SETTINGS_FILE_NAME)
++
++static uint8_t WS2812B_ledbuffer[WS2812B_LEDS][3];
++
++static RGBBacklightSettings rgb_settings = {
++    .version = RGB_BACKLIGHT_SETTINGS_VERSION,
++    .display_color_index = 0,
++    .settings_is_loaded = false};
++
++#define COLOR_COUNT (sizeof(colors) / sizeof(WS2812B_Color))
++
++const WS2812B_Color colors[] = {
++    {"Orange", 255, 79, 0},
++    {"Yellow", 255, 170, 0},
++    {"Spring", 167, 255, 0},
++    {"Lime", 0, 255, 0},
++    {"Aqua", 0, 255, 127},
++    {"Cyan", 0, 210, 210},
++    {"Azure", 0, 127, 255},
++    {"Blue", 0, 0, 255},
++    {"Purple", 127, 0, 255},
++    {"Magenta", 210, 0, 210},
++    {"Pink", 255, 0, 127},
++    {"Red", 255, 0, 0},
++    {"White", 140, 140, 140},
++};
++
++static void _port_init(void) {
++    furi_hal_gpio_write(LED_PIN, true);
++    furi_hal_gpio_init(LED_PIN, GpioModeOutputPushPull, GpioPullNo, GpioSpeedVeryHigh);
++}
++
++void WS2812B_send(void) {
++    _port_init();
++    furi_kernel_lock();
++    /* Последовательная отправка цветов светодиодов */
++    for(uint8_t lednumber = 0; lednumber < WS2812B_LEDS; lednumber++) {
++        //Последовательная отправка цветов светодиода
++        for(uint8_t color = 0; color < 3; color++) {
++            //Последовательная отправка битов цвета
++            for(uint8_t i = 7; i != 255; i--) {
++                if(WS2812B_ledbuffer[lednumber][color] & (1 << i)) {
++                    furi_hal_gpio_write(LED_PIN, true);
++                    uint32_t start = DWT->CYCCNT;
++                    while((DWT->CYCCNT - start) < 31) {
++                    }
++                    furi_hal_gpio_write(LED_PIN, false);
++                    start = DWT->CYCCNT;
++                    while((DWT->CYCCNT - start) < 15) {
++                    }
++                } else {
++                    furi_hal_gpio_write(LED_PIN, true);
++                    uint32_t start = DWT->CYCCNT;
++                    while((DWT->CYCCNT - start) < 15) {
++                    }
++                    furi_hal_gpio_write(LED_PIN, false);
++                    start = DWT->CYCCNT;
++                    while((DWT->CYCCNT - start) < 31) {
++                    }
++                }
++            }
++        }
++    }
++    furi_kernel_unlock();
++    //Необходимая задержка - признак окончания передачи
++    furi_delay_us(100);
++}
++
++uint8_t rgb_backlight_get_color_count(void) {
++    return COLOR_COUNT;
++}
++
++const char* rgb_backlight_get_color_text(uint8_t index) {
++    return colors[index].name;
++}
++
++static void rgb_backlight_load_settings(void) {
++    _port_init();
++
++    FuriHalRtcBootMode bm = furi_hal_rtc_get_boot_mode();
++    if(bm == FuriHalRtcBootModeDfu) {
++        rgb_settings.settings_is_loaded = true;
++        return;
++    }
++
++    RGBBacklightSettings settings;
++    File* file = storage_file_alloc(furi_record_open(RECORD_STORAGE));
++    const size_t settings_size = sizeof(RGBBacklightSettings);
++
++    FURI_LOG_I(TAG, "loading settings from \"%s\"", RGB_BACKLIGHT_SETTINGS_PATH);
++    bool fs_result =
++        storage_file_open(file, RGB_BACKLIGHT_SETTINGS_PATH, FSAM_READ, FSOM_OPEN_EXISTING);
++
++    if(fs_result) {
++        uint16_t bytes_count = storage_file_read(file, &settings, settings_size);
++
++        if(bytes_count != settings_size) {
++            fs_result = false;
++        }
++    }
++
++    if(fs_result) {
++        FURI_LOG_I(TAG, "load success");
++        if(settings.version != RGB_BACKLIGHT_SETTINGS_VERSION) {
++            FURI_LOG_E(
++                TAG,
++                "version(%d != %d) mismatch",
++                settings.version,
++                RGB_BACKLIGHT_SETTINGS_VERSION);
++        } else {
++            memcpy(&rgb_settings, &settings, settings_size);
++        }
++    } else {
++        FURI_LOG_E(TAG, "load failed, %s", storage_file_get_error_desc(file));
++    }
++
++    storage_file_close(file);
++    storage_file_free(file);
++    furi_record_close(RECORD_STORAGE);
++    rgb_settings.settings_is_loaded = true;
++};
++
++void rgb_backlight_save_settings(void) {
++    RGBBacklightSettings settings;
++    File* file = storage_file_alloc(furi_record_open(RECORD_STORAGE));
++    const size_t settings_size = sizeof(RGBBacklightSettings);
++
++    FURI_LOG_I(TAG, "saving settings to \"%s\"", RGB_BACKLIGHT_SETTINGS_PATH);
++
++    memcpy(&settings, &rgb_settings, settings_size);
++
++    bool fs_result =
++        storage_file_open(file, RGB_BACKLIGHT_SETTINGS_PATH, FSAM_WRITE, FSOM_CREATE_ALWAYS);
++
++    if(fs_result) {
++        uint16_t bytes_count = storage_file_write(file, &settings, settings_size);
++
++        if(bytes_count != settings_size) {
++            fs_result = false;
++        }
++    }
++
++    if(fs_result) {
++        FURI_LOG_I(TAG, "save success");
++    } else {
++        FURI_LOG_E(TAG, "save failed, %s", storage_file_get_error_desc(file));
++    }
++
++    storage_file_close(file);
++    storage_file_free(file);
++    furi_record_close(RECORD_STORAGE);
++};
++
++RGBBacklightSettings* rgb_backlight_get_settings(void) {
++    if(!rgb_settings.settings_is_loaded) {
++        rgb_backlight_load_settings();
++    }
++    return &rgb_settings;
++}
++
++void rgb_backlight_set_color(uint8_t color_index) {
++    rgb_settings.display_color_index = color_index;
++}
++
++void rgb_backlight_update(uint8_t backlight) {
++    if(!rgb_settings.settings_is_loaded) {
++        rgb_backlight_load_settings();
++    }
++    for(uint8_t i = 0; i < WS2812B_LEDS; i++) {
++        //Green
++        WS2812B_ledbuffer[i][0] =
++            colors[rgb_settings.display_color_index].green * (backlight / 255.0f);
++        //Red
++        WS2812B_ledbuffer[i][1] =
++            colors[rgb_settings.display_color_index].red * (backlight / 255.0f);
++        //Blue
++        WS2812B_ledbuffer[i][2] =
++            colors[rgb_settings.display_color_index].blue * (backlight / 255.0f);
++    }
++
++    WS2812B_send();
++}
+diff --git a/lib/drivers/WS2812B.h b/lib/drivers/WS2812B.h
+new file mode 100644
+index 00000000..407ff1bb
+--- /dev/null
++++ b/lib/drivers/WS2812B.h
+@@ -0,0 +1,54 @@
++/*
++    WS2812B FlipperZero driver
++    Copyright (C) 2022  Victor Nikitchuk (https://github.com/quen0n)
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
 +    
-     SAVED_PYTHONNOUSERSITE="${PYTHONNOUSERSITE:-""}";
-     SAVED_PYTHONPATH="${PYTHONPATH:-""}";
--    SAVED_PYTHONHOME="${PYTHONHOME:-""}";
- 
-     PYTHONNOUSERSITE=1;
-     PYTHONPATH=;
--    PYTHONHOME=;
- }
- 
--fbtenv_main "${1:-""}";
-+fbtenv_main "${1:-""}";
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++#ifndef WS2812B_H_
++#define WS2812B_H_
++
++#include "furi.h"
++#include <stdint.h>
++#include <stdbool.h>
++#include <input/input.h>
++
++typedef struct {
++    uint8_t version;
++    uint8_t display_color_index;
++    bool settings_is_loaded;
++} RGBBacklightSettings;
++
++typedef struct {
++    char* name;
++    uint8_t red;
++    uint8_t green;
++    uint8_t blue;
++} WS2812B_Color;
++
++#define LED_PIN &gpio_ext_pa7
++#define WS2812B_LEDS 3
++
++void rgb_backlight_save_settings(void);
++
++void rgb_backlight_update(uint8_t backlight);
++
++void rgb_backlight_set_color(uint8_t color_index);
++void rgb_backlight_set_color(uint8_t color_index);
++
++RGBBacklightSettings* rgb_backlight_get_settings(void);
++uint8_t rgb_backlight_get_color_count(void);
++const char* rgb_backlight_get_color_text(uint8_t index);
++
++#endif /* WS2812B_H_ */
 \ No newline at end of file
 -- 
-2.39.0.windows.2
+2.37.2.windows.2
 

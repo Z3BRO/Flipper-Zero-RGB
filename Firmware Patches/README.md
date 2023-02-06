@@ -1,5 +1,5 @@
 
-## This patch file was built by Quenon#1989 and edited by updated by me, Huge thanks to Quenon#1989
+## This patch file was built by Quenon#1989 and edited by me, Huge thanks to Quenon#1989
 
 
 

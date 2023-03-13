@@ -1,0 +1,1 @@
+Drag all the folders to the Root directory of your uncompiled Flipper FW, then compile and flash.

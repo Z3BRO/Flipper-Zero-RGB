@@ -1,6 +1,6 @@
 # Flipper-Zero-RBG-Backlight
 
-Big thanks to Quenon#1989,t.me/hitriy and axum#6461 for making this possible!
+Big thanks to Quenon#1989, t.me/hitriy and axum#6461 for making this possible!
 
 # Tutorials
 

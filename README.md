@@ -2,7 +2,7 @@
 
 <h1 align="center"> Flipper Zero RBG Backlight!!! </h1>
 
-<h3 align="center"> <code>Big thanks to Quenon#1989, t.me/hitriy and axum#6461 for making this possible!</code></h3>
+<h4 align="center"> <code>Big thanks to Quenon#1989, t.me/hitriy and axum#6461 for making this possible!</code></h4>
 
 <h1 align="center">  Here are the links to everything you will need! </h3>
 

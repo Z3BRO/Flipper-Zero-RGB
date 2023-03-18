@@ -1,10 +1,25 @@
-# Flipper-Zero-RBG-Backlight
+![r2d9ahnjp-fnd-gif-iv2csr](https://user-images.githubusercontent.com/89728480/226134250-966746b9-74c1-461a-a6d4-82453af41d7c.gif)
+
+<h1 align="center"> Flipper Zero RBG Backlight!!! </h1>
+
+<h3 align="center"> <code>Big thanks to Quenon#1989, t.me/hitriy and axum#6461 for making this possible!</code></h1>
+
+<h1 align="center">  Here are the links to everything you will need! </h1>
+
+
+Capacitors - https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414
+
+
+Leds, Pack of 10 - https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136
+
+Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY6
+
+When purchasing the PCB's make sure to have the thickness set to 0.6mm and the layer ammount set as 2.
 
 Showcase https://youtu.be/W1frMyVFv6Y
 
-## Big thanks to Quenon#1989, t.me/hitriy and axum#6461 for making this possible!
 
-# Tutorials
+<h1 align="center"> Tutorials </h1>
 
 ## RGB Backlight Build Guides 
 
@@ -18,20 +33,7 @@ Another Tutorial on how to remove the led backlight board (also made by t.me/hit
 
 Here is a video i made on assembling the pcb https://youtu.be/N64fDjziTaE
 
-
-# Here are the links to everything you will need!
-
-
-Capacitors - https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414
-
-
-Leds, Pack of 10 - https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136
-
-Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY6
-
-When purchasing the PCB's make sure to have the thickness set to 0.6mm and the layer ammount set as 2.
-
-# Firmware stuff
+<h1 align="center"> Firmware Stuff </h1>
 
 All of the repos below have been modified with their respective patches (FW Made by Quenon#1989)
 

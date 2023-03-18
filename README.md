@@ -4,7 +4,7 @@
 
 <h3 align="center"> <code>Big thanks to Quenon#1989, t.me/hitriy and axum#6461 for making this possible!</code></h3>
 
-<h1 align="center">  Here are the links to everything you will need! </h1>
+<h1 align="center">  Here are the links to everything you will need! </h3>
 
 
 Capacitors - https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414

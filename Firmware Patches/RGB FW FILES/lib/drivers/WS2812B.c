@@ -40,7 +40,7 @@ static RGBBacklightSettings rgb_settings = {
 #define COLOR_COUNT (sizeof(colors) / sizeof(WS2812B_Color))
 
 const WS2812B_Color colors[] = {
-    {"Orange", 255, 165, 0},
+    {"Orange", 255, 69, 0},
     {"Red", 255, 0, 0},
     {"Maroon", 128, 0, 0},
     {"Yellow", 255, 255, 0},

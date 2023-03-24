@@ -11,7 +11,7 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -28,14 +28,14 @@ void SK6805_init(void);
 
 /**
  * @brief Получить количество светодиодов в подсветке
- * 
+ *
  * @return Количество светодиодов
  */
 uint8_t SK6805_get_led_count(void);
 
 /**
  * @brief Установить цвет свечения светодиода
- * 
+ *
  * @param led_index номер светодиода (от 0 до SK6805_get_led_count())
  * @param r значение красного (0-255)
  * @param g значение зелёного (0-255)

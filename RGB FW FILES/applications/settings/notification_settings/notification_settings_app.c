@@ -68,6 +68,7 @@ const bool vibro_value[VIBRO_COUNT] = {false, true};
 static void backlight_changed(VariableItem* item) {
     NotificationAppSettings* app = variable_item_get_context(item);
     uint8_t index = variable_item_get_current_value_index(item);
+
     variable_item_set_current_value_text(item, backlight_text[index]);
     app->notification->settings.display_brightness = backlight_value[index];
     notification_message(app->notification, &sequence_display_backlight_on);
@@ -208,7 +209,6 @@ int32_t notification_settings_app(void* p) {
     NotificationAppSettings* app = alloc_settings();
     view_dispatcher_run(app->view_dispatcher);
     notification_message_save_settings(app->notification);
-
     free_settings(app);
     return 0;
 }

@@ -33,8 +33,8 @@ typedef struct {
 } RGBBacklightSettings;
 
 /**
- * @brief Получить текущие настройки RGB-подсветки 
- * 
+ * @brief Получить текущие настройки RGB-подсветки
+ *
  * @return Указатель на структуру настроек
  */
 RGBBacklightSettings* rgb_backlight_get_settings(void);
@@ -45,34 +45,34 @@ RGBBacklightSettings* rgb_backlight_get_settings(void);
 void rgb_backlight_load_settings(void);
 
 /**
- * @brief Сохранить текущие настройки RGB-подсветки 
+ * @brief Сохранить текущие настройки RGB-подсветки
  */
 void rgb_backlight_save_settings(void);
 
 /**
  * @brief Применить текущие настройки RGB-подсветки
- * 
+ *
  * @param brightness Яркость свечения (0-255)
  */
 void rgb_backlight_update(uint8_t brightness);
 
 /**
  * @brief Установить цвет RGB-подсветки
- * 
+ *
  * @param color_index Индекс цвета (0 - rgb_backlight_get_color_count())
  */
 void rgb_backlight_set_color(uint8_t color_index);
 
 /**
  * @brief Получить количество доступных цветов
- * 
+ *
  * @return Число доступных вариантов цвета
  */
 uint8_t rgb_backlight_get_color_count(void);
 
 /**
  * @brief Получить текстовое название цвета
- * 
+ *
  * @param index Индекс из доступных вариантов цвета
  * @return Указатель на строку с названием цвета
  */

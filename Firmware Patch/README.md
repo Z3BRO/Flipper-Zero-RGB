@@ -9,6 +9,6 @@
 * **To Apply The Patch Use The Comman Below.**
 
 ```powershell
-git apply --whitespace=fix RGB-FW.patch
+git apply --whitespace=fix RGB_FW.patch
 ```
   * **Make sure you have the patch in the root directory of the fw you are working on.**

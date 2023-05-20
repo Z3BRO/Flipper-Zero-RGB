@@ -9,7 +9,6 @@
 
 Capacitors - https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414
 
-
 Leds, Pack of 10
 - https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136 [Out of Stock as of 5/19/23]
 Alternative sources 
@@ -17,7 +16,6 @@ Alternative sources
 - https://mouser.com/ProductDetail/Adafruit/4492?qs=CUBnOrq4ZJz3oeplDXDOWA%3D%3D		   
 
 Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY6
-
 
 When purchasing the PCB's make sure to have the thickness set to 0.6mm and the layer ammount set as 2.
 PCBWay is reccomended as some other manufacturers (JLPCB, etc) cannot process the sub-5mm parts of the board. 

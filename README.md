@@ -11,7 +11,7 @@ Capacitors - https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT
 
 
 Leds, Pack of 10
-- https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136 [Out of Stock as of 5/29/23]
+- https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136 [Out of Stock as of 5/19/23]
 Alternative sources 
 - https://www.adafruit.com/product/4492
 - https://mouser.com/ProductDetail/Adafruit/4492?qs=CUBnOrq4ZJz3oeplDXDOWA%3D%3D		   

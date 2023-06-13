@@ -32,20 +32,21 @@ void furi_hal_light_init() {
 }
 
 void furi_hal_light_set(Light light, uint8_t value) {
-    furi_hal_i2c_acquire(&furi_hal_i2c_handle_power);
-    if(light & LightRed) {
-        lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelRed, value);
-    }
-    if(light & LightGreen) {
-        lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelGreen, value);
-    }
-    if(light & LightBlue) {
-        lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelBlue, value);
-    }
     if(light & LightBacklight) {
         rgb_backlight_update(value);
+    } else {
+        furi_hal_i2c_acquire(&furi_hal_i2c_handle_power);
+        if(light & LightRed) {
+            lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelRed, value);
+        }
+        if(light & LightGreen) {
+            lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelGreen, value);
+        }
+        if(light & LightBlue) {
+            lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelBlue, value);
+        }
+        furi_hal_i2c_release(&furi_hal_i2c_handle_power);
     }
-    furi_hal_i2c_release(&furi_hal_i2c_handle_power);
 }
 
 void furi_hal_light_blink_start(Light light, uint8_t brightness, uint16_t on_time, uint16_t period) {

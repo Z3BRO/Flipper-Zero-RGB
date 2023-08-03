@@ -1,5 +1,5 @@
 
-<h4 align="center"> <code>This patch file was built by Quenon#1989 and rewritten by xMasterX, Huge thanks to xMasterX</code></h4>
+<h4 align="center"> <code>This patch file was built by Quenon#1989 and rewritten by xMasterX, Huge thanks to xMasterX!</code></h4>
 
 
 

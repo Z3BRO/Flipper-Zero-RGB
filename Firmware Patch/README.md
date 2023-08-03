@@ -1,9 +1,9 @@
 
-<h4 align="center"> <code>This patch file was built by Quenon#1989 and edited by Z3BRO#9172, Huge thanks to Quenon#1989</code></h4>
+<h4 align="center"> <code>This patch file was built by Quenon#1989 and rewritten by xMasterX, Huge thanks to xMasterX</code></h4>
 
 
 
-<h3 align="center">This Patch Has Been Tested On Roguemaster, Unleashed, Xtreme, Dexmaster And Has Worked On All</h3>
+<h3 align="center">This Patch Has Been Tested On Roguemaster, Unleashed, Xtreme, And Has Worked On All</h3>
  
  
 * **To Apply The Patch Use The Comman Below.**

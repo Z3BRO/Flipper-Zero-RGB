@@ -14,9 +14,9 @@ Leds, Pack of 10
 - https://www.adafruit.com/product/4492
 - https://mouser.com/ProductDetail/Adafruit/4492?qs=CUBnOrq4ZJz3oeplDXDOWA%3D%3D		   
 
-Thin gauge wire (im using 28 gauge bc its what i had) - https://shorturl.at/vBLY6
+Thin gauge wire (I'm using 28 gauge because it is what I had) - https://www.amazon.com/Fermerry-Silicone-Stranded-Copper-Electrical/dp/B089CP9N98
 
-When purchasing the PCB's make sure to have the thickness set to 0.6mm and the layer ammount set as 2.
+When purchasing the PCB's make sure to have the thickness set to 0.6mm and the layer amount set as 2.
 
 Showcase https://youtu.be/W1frMyVFv6Y
 
@@ -29,11 +29,11 @@ Video Guide Made by myself https://youtu.be/pft1CI5ikA4
 
 Here is a Tutorial made by t.me/hitriy https://telegra.ph/Flipper-Zero-RGB-backlight-guide-12-26
 
-Another Tutorial on how to remove the led backlight board (also made by t.me/hitriy) https://telegra.ph/Izmenenie-cveta-podsvetki-Flipper-Zero-11-14 you will need to translate it unless you speak russian
+Another Tutorial on how to remove the led backlight board (also made by t.me/hitriy) https://telegra.ph/Izmenenie-cveta-podsvetki-Flipper-Zero-11-14 you will need to translate it unless you speak Russian
 
 ## PCB Assembly
 
-Here is a video i made on assembling the pcb https://youtu.be/N64fDjziTaE
+Here is a video I made on assembling the PCB https://youtu.be/N64fDjziTaE
 
 <h1 align="center"> Firmware Stuff </h1>
 
@@ -66,7 +66,7 @@ Step 6: Open the f7-update-local folder
 Step 7: Update from the update.fuf file  ( It will have a picture of a box with an arrow next to it)
 
 
-# How to update from the pre compiled firmware
+# How to update from the pre-compiled firmware
 
 Step 1: git clone --recursive https://github.com/Z3BRO/Flipper-Zero-RBG-Backlight
 
@@ -83,7 +83,7 @@ Step 4: Copy the desired folder to the Update Folder on your Flipper
 Step 5: On your Flipper Navigate to the Update folder
 
 
-Step 6: Open the folder you just added to the sd card
+Step 6: Open the folder you just added to the SD card
 
 
 Step 7: Update from the update.fuf file  ( It will have a picture of a box with an arrow next to it)

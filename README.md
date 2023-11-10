@@ -2,23 +2,25 @@
 
 # Flipper Zero RGB Backlight
 
-Big thanks to Quenon#1989, t.me/hitriy, and axum#6461 for making this possible!
+    Big thanks to Quenon#1989, t.me/hitriy, and axum#6461 for making this possible!
 
 ## Links
 
-- Capacitors:
-  - [Kyocera AVX](https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414)
-- LEDs (Pack of 10):
+- Capacitors (KYOCERA AVX KGM15AR70J104JT):
+  - [Digikey](https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414)
+- LEDs (Adafruit Neopixel 4492 - Pack of 10):
   - [Digikey](https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136)
   - [Adafruit](https://www.adafruit.com/product/4492)
   - [Mouser](https://mouser.com/ProductDetail/Adafruit/4492?qs=CUBnOrq4ZJz3oeplDXDOWA%3D%3D)
-- Thin gauge wire (28 gauge): [Amazon](https://www.amazon.com/Fermerry-Silicone-Stranded-Copper-Electrical/dp/B089CP9N98)
+- Thin gauge wire (28 AWG):
+	- [Amazon](https://www.amazon.com/Fermerry-Silicone-Stranded-Copper-Electrical/dp/B089CP9N98)
 
-When purchasing PCBs, ensure the thickness is set to 0.6mm and the layer amount is set as 2.
+For each Module you need 3 Capacitors and 3 LEDs
+
+When purchasing PCBs, ensure the thickness is set to 0.6mm and the layer amount is set to 2.
 
 Showcase Video: [YouTube](https://youtu.be/W1frMyVFv6Y)
 
-# Tutorials
 
 ## RGB Backlight Build Guides
 
@@ -39,4 +41,4 @@ All repositories below support the RGB Mod.
 
 - **Community Modified**:
   - [OFW](https://github.com/quen0n/flipperzero-firmware-rgb)
-  - [Unleashed](https://github.com/quen0n/unleashed-firmware-rgb)
+  - [Unleashed Firmware](https://github.com/quen0n/unleashed-firmware-rgb)

@@ -6,7 +6,8 @@ Big thanks to Quenon#1989, t.me/hitriy, and axum#6461 for making this possible!
 
 ## Links
 
-- Capacitors: [Kyocera AVX](https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414)
+- Capacitors:
+  - [Kyocera AVX](https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414)
 - LEDs (Pack of 10):
   - [Digikey](https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136)
   - [Adafruit](https://www.adafruit.com/product/4492)

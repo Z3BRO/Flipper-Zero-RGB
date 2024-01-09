@@ -12,6 +12,7 @@
   - [Digikey](https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136)
   - [Adafruit](https://www.adafruit.com/product/4492)
   - [Mouser](https://mouser.com/ProductDetail/Adafruit/4492?qs=CUBnOrq4ZJz3oeplDXDOWA%3D%3D)
+  - [AliExpress](https://www.aliexpress.us/item/2251832771718100.html)
 - Thin gauge wire (28 AWG):
 	- [Amazon](https://www.amazon.com/Fermerry-Silicone-Stranded-Copper-Electrical/dp/B089CP9N98)
 

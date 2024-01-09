@@ -2,13 +2,13 @@
 
 # Flipper Zero RGB Backlight
 
-    Big thanks to Quenon#1989, t.me/hitriy, and axum#6461 for making this possible!
+    Big thanks to Quenon#1989, t.me/hitriy, axum#6461, and codeallnight#1337 for making this possible!
 
 ## Links
 
-- Capacitors (KYOCERA AVX KGM15AR70J104JT):
+- Capacitors (0.1uF 0603):
   - [Digikey](https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414)
-- LEDs (Adafruit Neopixel 4492 - Pack of 10):
+- LEDs (SK6805-EC 15):
   - [Digikey](https://www.digikey.com/en/products/detail/adafruit-industries-llc/4492/11569136)
   - [Adafruit](https://www.adafruit.com/product/4492)
   - [Mouser](https://mouser.com/ProductDetail/Adafruit/4492?qs=CUBnOrq4ZJz3oeplDXDOWA%3D%3D)
@@ -24,7 +24,7 @@ Showcase Video: [YouTube](https://youtu.be/W1frMyVFv6Y)
 
 ## RGB Backlight Build Guides
 
-- [Video Guide by Author](https://youtu.be/pft1CI5ikA4)
+- [Video Guide by Z3BRO](https://youtu.be/pft1CI5ikA4)
 - [Guide by t.me/hitriy](https://telegra.ph/Flipper-Zero-RGB-backlight-guide-12-26)
 - [LED Backlight Board Removal Tutorial (Russian)](https://telegra.ph/Izmenenie-cveta-podsvetki-Flipper-Zero-11-14) - Translation may be needed.
 
@@ -36,9 +36,11 @@ Showcase Video: [YouTube](https://youtu.be/W1frMyVFv6Y)
 
 All repositories below support the RGB Mod.
 
-- **Native Supported**:
+- **Natively Supported**:
   - [Xtreme Firmware](https://github.com/Flipper-XFW/Xtreme-Firmware)
+  - [RougeMaster Firmware](https://github.com/RogueMaster/flipperzero-firmware-wPlugins)
+  - [Unleashed Firmware (RGB Specific Build)](https://github.com/DarkFlippers/unleashed-firmware)
 
 - **Community Modified**:
-  - [OFW](https://github.com/quen0n/flipperzero-firmware-rgb)
-  - [Unleashed Firmware](https://github.com/quen0n/unleashed-firmware-rgb)
+  - [OFW](https://github.com/Z3BRO/Flipper-Zero-OFW-RGB)
+  - [AstrOS (Fork of OFW)](https://github.com/astro-cyberpaws/flipperzero-firmware-rgb)

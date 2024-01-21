@@ -1,10 +1,10 @@
  ![Flipper Zero RGB](https://user-images.githubusercontent.com/89728480/226134250-966746b9-74c1-461a-a6d4-82453af41d7c.gif)
 
-# Flipper Zero RGB Backlight
+# Flipper Zero RGB
 
     Big thanks to Quenon#1989, t.me/hitriy, axum#6461, and codeallnight#1337 for making this possible!
 
-## Backlight Parts
+## RGB Backlight Parts
 
 - Capacitors (0.1uF 0603):
   - [Digikey](https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414)

@@ -29,9 +29,9 @@ Showcase Video: [YouTube](https://youtu.be/W1frMyVFv6Y)
 - [Guide by t.me/hitriy](https://telegra.ph/Flipper-Zero-RGB-backlight-guide-12-26)
 - [LED Backlight Board Removal Tutorial (Russian)](https://telegra.ph/Izmenenie-cveta-podsvetki-Flipper-Zero-11-14) - Translation may be needed.
 
-## PCB Assembly
+## RGB Backlight PCB Assembly
 
-- [PCB Assembly Video](https://youtu.be/N64fDjziTaE)
+- [Assembly Video](https://youtu.be/N64fDjziTaE)
 
 ## Supported Firmware
 

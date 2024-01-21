@@ -1,10 +1,10 @@
- ![Flipper Zero RGB Backlight](https://user-images.githubusercontent.com/89728480/226134250-966746b9-74c1-461a-a6d4-82453af41d7c.gif)
+ ![Flipper Zero RGB](https://user-images.githubusercontent.com/89728480/226134250-966746b9-74c1-461a-a6d4-82453af41d7c.gif)
 
 # Flipper Zero RGB Backlight
 
     Big thanks to Quenon#1989, t.me/hitriy, axum#6461, and codeallnight#1337 for making this possible!
 
-## Links
+## Backlight Parts
 
 - Capacitors (0.1uF 0603):
   - [Digikey](https://www.digikey.com/en/products/detail/kyocera-avx/06036C104JAT2A/1600414)
@@ -16,9 +16,9 @@
 - Thin gauge wire (28 AWG):
 	- [Amazon](https://www.amazon.com/Fermerry-Silicone-Stranded-Copper-Electrical/dp/B089CP9N98)
 
-For each Module you need 3 Capacitors and 3 LEDs
+For each Module, you need 3 Capacitors and 3 LEDs
 
-When purchasing PCBs, ensure the thickness is set to 0.6mm and the layer amount is set to 2.
+When purchasing Backlight PCBs, ensure the thickness is set to 0.6mm and the layer amount is set to 2.
 
 Showcase Video: [YouTube](https://youtu.be/W1frMyVFv6Y)
 

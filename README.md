@@ -41,6 +41,7 @@ All repositories below support the RGB Mod.
   - [Xtreme Firmware](https://github.com/Flipper-XFW/Xtreme-Firmware)
   - [RougeMaster Firmware](https://github.com/RogueMaster/flipperzero-firmware-wPlugins)
   - [Unleashed Firmware (RGB Specific Build)](https://github.com/DarkFlippers/unleashed-firmware)
+  - [Momentum Firmware](https://github.com/Next-Flip/Momentum-Firmware)
 
 - **Community Modified**:
   - [OFW](https://github.com/Z3BRO/Flipper-Zero-OFW-RGB)

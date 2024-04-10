@@ -44,8 +44,8 @@ All repositories below support the RGB Mod.
   - [Momentum Firmware](https://github.com/Next-Flip/Momentum-Firmware)
 
 - **Community Modified**:
-  - [OFW](https://github.com/Z3BRO/Flipper-Zero-OFW-RGB)
-  - [AstrOS (Fork of OFW)](https://github.com/astro-cyberpaws/flipperzero-firmware-rgb)
+  - [OFW (With Internal RGB Support!](https://github.com/Z3BRO/Flipper-Zero-OFW-RGB)
+
  
 Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 

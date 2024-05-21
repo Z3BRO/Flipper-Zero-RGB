@@ -1,4 +1,4 @@
- ![Flipper Zero RGB](https://user-images.githubusercontent.com/89728480/226134250-966746b9-74c1-461a-a6d4-82453af41d7c.gif)
+ ![Flipper Zero RGB](https://github.com/Z3BRO/Flipper-Zero-RGB/blob/main/RGBFlipperShowcaseGIF.gif)
 
 # Flipper Zero RGB
 

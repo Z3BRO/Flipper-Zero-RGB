@@ -25,7 +25,11 @@ For each Module, you need 3 Capacitors and 3 LEDs
 
 When purchasing Backlight PCBs, ensure the thickness is set to 0.6mm and the layer amount is set to 2.
 
-## RGB Backlight Build Guides
+## Install Guides
+
+- [Updated Guide by Z3BRO](https://github.com/Z3BRO/Flipper-Zero-RGB/blob/main/InternalRGBInstalGuide.md) 
+
+Outdated guides
 
 - [Video Guide by Z3BRO](https://youtu.be/pft1CI5ikA4)
 - [Guide by t.me/hitriy](https://telegra.ph/Flipper-Zero-RGB-backlight-guide-12-26)
@@ -51,7 +55,7 @@ After I placed the order for a production run of Internal RGB I noticed there wa
 Please note that if you would like to use an RGB Backlight along side your Internal RGB you MUST solder a wire from the RGB Backlight's Data Out pad to the Internal RGB's Data In pad, connecting both the RGB Backlight and Internal RGB to the Vibro line WILL result in issues when changing the color of the LEDs.
 
 ## How to install
-I will have a written guide as well as a video guide on the instalation process done shortly.
+- [Internal RGB Instal Guide](https://github.com/Z3BRO/Flipper-Zero-RGB/blob/main/InternalRGBInstalGuide.md)
 
 # Supported Firmwares
 

@@ -2,12 +2,13 @@
 
 This guide will start at the point where your original orange backlight is removed from your Flipper. You can use [This Guide](https://telegra.ph/Izmenenie-cveta-podsvetki-Flipper-Zero-11-14) (Needs translation if you don't speak Russian), [This Guide](https://telegra.ph/Flipper-Zero-RGB-backlight-guide-12-26) or [This Video Guide](https://www.youtube.com/watch?v=pft1CI5ikA4) to get to that point.
 
-# For this install you will need
+If you're just installing the RGB Backlight, skip all steps necessary for Internal RGB and only solder a wire to the Data-In pad on the RGB Backlight.
+
+# For this installation you will need
 
 - Flipper Zero
 - PH #0 Screwdriver
 - ~1mm Flathead Screwdriver 
-- Guitar pick thingy
 - Soldering Iron
   - Solder and Flux
 - Some thin wire (I like using [UL10064 36ga insulated wire](https://www.aliexpress.us/item/3256805268543019.html) from AliExpress)

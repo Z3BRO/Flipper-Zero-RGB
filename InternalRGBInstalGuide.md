@@ -82,6 +82,6 @@ Now its time to put the bottom shell on; in my experience, it is easiest to star
 
 Once all the LEDs are under the bottom shell, you can clip the bottom shell into place, and that's it! Go and test all the LEDs BEFORE screwing in the bottom shell.
 
-YAYAYAYAYAYAYAY. You are now the proud owner of a blindly bright RGB Flipper Zero, be sure to make fun of all your hacker friends who don't have an RGB FLipper because I'm poor and need people to buy my mod.
+YAYAYAYAYAYAYAY. You are now the proud owner of a blindly bright RGB Flipper Zero, be sure to make fun of all your hacker friends who don't have an RGB Fliper because I'm poor and need people to buy my mod.
 
 

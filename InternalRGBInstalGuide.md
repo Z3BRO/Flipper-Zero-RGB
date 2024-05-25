@@ -12,6 +12,7 @@ If you're just installing the RGB Backlight, skip all steps necessary for Intern
 - Soldering Iron
   - Solder and Flux
 - Some thin wire (I like using [UL10064 36ga insulated wire](https://www.aliexpress.us/item/3256805268543019.html) from AliExpress)
+- Double-sided adhesive under 4mm thick (I used some random 3mm stuff that I had laying around)
 - RGB Backlight with a Data-Out Pad
 - Internal RGB Flex PCB
 

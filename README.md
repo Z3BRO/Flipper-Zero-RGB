@@ -45,7 +45,7 @@ Internal RGB For the Flipper Zero is a mod I have been working on for about a ye
 This mod is for people with a Transparent/Translucent Shell that want their Flippers to be a glowing beacon of light for the Flipper Gods, or they just wanna let you know that their Flipper is cooler than yours because it has gamer lights.
 
 ## Where to purchase
-For now, the Internal RGB Mod is going to be sold exclusively on [Rabbit-Labs.com](https://rabbit-labs.com). I plan to release the board for sale by the end of this month (but it will probably be early next month)
+For now, the Internal RGB Mod is being sold exclusively at [Rabbit-Labs.com](https://www.rabbit-labs.com/product/internal-rgb-case-mod-and-rgb-backlight-by-z3bro/52). 
 
 ## Supporting Mods
 The first batch of Internal RGB Mods will require the user to solder a wire to a Vibro test pad or to the Data Out pad of RGB Backlights that have it (Not all RGB Backlights have a Data Out pad, those that do not are not compatiable with Internal RGB). 

@@ -71,6 +71,8 @@ If everything lines up, solder the 5V, GND, and two anchors to the Flippers NFC/
 
 ![image00016](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/c847f01b-9629-4f6f-bc4f-aee8f04ddb04)
 
+Now its time to test that everything is working correctly before putting it back in the shell. Reconnect the battery and plug your sd card in, then flash [OFW (With Internal RGB Support)](https://github.com/Z3BRO/Flipper-Zero-OFW-RGB) to your Flipper. Go through the RGB Settings page in the setting app and make sure everything is working. If it is, then you can disconnect the battery and sd card, then continue with the guide.
+
 Be careful when inserting the Flipper into the top shell. It's very easy to rip the LEDs off their pads. The single LED between the two GPIO headers should go completely into the top shell, while the strip of 6 LEDs will have some sticking out. 
 
 ![image00018](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/3c2d9d01-0420-46bb-9407-fba8e3143a09)

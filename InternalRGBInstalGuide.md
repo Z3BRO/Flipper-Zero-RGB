@@ -21,7 +21,8 @@ If you're just installing the RGB Backlight, skip all steps necessary for Intern
 # The Install
 
 Cut two lengths of your wire, one about double the length of the other. Keep them longer than needed; you can always trim them later. Solder the longer length of wire to the Data-Out Pad on your backlight and the shorter one to the Data-In Pad on the backlight.
-![image00002](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/efc0301f-476c-45a3-8e1a-da53d3c96c3a)
+
+![Out](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/51a60c4d-59ef-40d4-ac59-9e6a71cafeec)
 
 Place the Backlight into the LCD like so; make sure to reinstall the reflector on the back of the LCD; otherwise, you'll have a very bad time.
 
@@ -37,11 +38,11 @@ Solder the backlight to the Flipper's Main PCB, use lots of flux during this pro
 
 Since the "ground" pad for the backlight on the Main PCB isn't really a ground point, solder a wire from the left pad to the GND3 test point.
 
-![image00006](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/f26ecc63-41d9-46ed-8509-f4e8a4ddc653)
+![Untitled design](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/ffb5ac32-d1e3-4a42-b0da-7464786de9b1)
 
 Take the shorter data wire (Data-In) and solder it to the VIBRO test pad. Be careful as that pad is very close to a GPIO header and some capacitors.
 
-![image00007](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/391e2ed8-9712-4cc7-a7d5-1a542785aadd)
+![Untitled design (1)](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/e676c9b3-ea12-4c75-9d1d-22668eda3c48)
 
 This would be a good time to connect the battery and test that the RGB Backlight works. If everything is good, you can reinstall the Black plastic that holds the buttons and LCD in place. 
 
@@ -67,9 +68,9 @@ If everything looks good, remove the backing on the double-sided tape and place 
 
 ![image00015](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/3dfdcb28-e715-4393-bf4e-a8d5c7174322)
 
-If everything lines up, solder the 5V, GND, and two anchors to the Flippers NFC/RFID PCB. Next, bring the remaining data wire over the Vibro motor and solder it to the Internal RGB PCB. Finally, you can reinstall the iButton PCB.
+If everything lines up, liberally apply flux and solder the 5V, GND, and two anchors to the Flippers NFC/RFID PCB. Next, bring the remaining data wire over the Vibro motor and solder it to the Internal RGB PCB. Finally, you can reinstall the iButton PCB.
 
-![image00016](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/c847f01b-9629-4f6f-bc4f-aee8f04ddb04)
+![Untitled design (3)](https://github.com/Z3BRO/Flipper-Zero-RGB/assets/101530102/47a250e7-7377-432c-aa1a-3e121695f348)
 
 Now its time to test that everything is working correctly before putting it back in the shell. Reconnect the battery and plug your sd card in, then flash [OFW (With Internal RGB Support)](https://github.com/Z3BRO/Flipper-Zero-OFW-RGB) to your Flipper. Go through the RGB Settings page in the setting app and make sure everything is working. If it is, then you can disconnect the battery and sd card, then continue with the guide.
 

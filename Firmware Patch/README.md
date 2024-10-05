@@ -6,7 +6,7 @@
 <h3 align="center">This Patch Has Been Tested On Roguemaster, Unleashed, Xtreme, And Has Worked On All</h3>
  
  
-* **To Apply The Patch Use The Comman Below.**
+* **To Apply The Patch Use The Command Below.**
 
 ```powershell
 git apply --whitespace=fix RGB_FW.patch

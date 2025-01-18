@@ -1,3 +1,33 @@
+# ARCHIVED
+
+Hello everyone! Z3BRO here. It is with great sadness I have to come forward and say that my Flipper Zero RGB Repositories are now dead. 
+Instead of dwelling on the fact that its over, I want to thank all the wonderful people who helped me progress as far as I did.
+
+To Rabbitt and Foxx, thank you for your unwavering support through my entire Flipper Zero journey. 
+Although it didn't end like we all wished it could have, you will both forever have a special place in my heart. 
+
+To Astro, thank you for everything you did. You know what I'm talking about, thank you for that. I will forever be in your debt. 
+
+To CodeAllNight, thank you for taking this stupid project of mine to the next level. Your selfless acts were not disregarded. 
+
+To the Flipper Zero team, thank you for all your hard work with the Flipper Zero development and the incredible community you've built. 
+
+And finally, I thank all of you! Without the community's support, I would never have been able to do any of this. Thank you. 
+
+
+# The Future of my RGB Mods
+
+Unfortunately, as you all know, unfortunate circumstances resulted in the termination of my partnership with Rabbit-Labs and the stopping of production. 
+
+But do not fret. I have decided to fully release all the PCB Design Files to my final Internal-RGB and Z3BRgb boards. The KiCad files will be in this repository. 
+After some heavy Internal-RGB testing, I made countless changes to the design. These changes eliminate all of the issues with V1 of Internal-RGB and add some new features.
+
+I have removed all licenses from these boards, feel free to distribute, modify, produce and or sell them at your discretion. 
+
+
+ 
+ 
+ 
  ![Flipper Zero RGB](https://github.com/Z3BRO/Flipper-Zero-RGB/blob/main/RGBFlipperShowcaseGIF.gif)
 
 # Flipper Zero RGB
@@ -45,7 +75,7 @@ Internal RGB For the Flipper Zero is a mod I have been working on for about a ye
 This mod is for people with a Transparent/Translucent Shell that want their Flippers to be a glowing beacon of light for the Flipper Gods, or they just wanna let you know that their Flipper is cooler than yours because it has gamer lights.
 
 ## Where to purchase
-For now, the Internal RGB Mod is being sold exclusively at [Rabbit-Labs.com](https://www.rabbit-labs.com/product/internal-rgb-case-mod-and-rgb-backlight-by-z3bro/52). 
+The Internal-RGB mod is no longer officially sold nor produced by me. After making these boards open source, people may begin to manufacture and sell them. 
 
 ## Supporting Mods
 The first batch of Internal RGB Mods will require the user to solder a wire to a Vibro test pad or to the Data Out pad of RGB Backlights that have it (Not all RGB Backlights have a Data Out pad, those that do not are not compatiable with Internal RGB). 

@@ -1,0 +1,1 @@
+When ordering, set layer count to 2 and thickness to 0.6mm.
